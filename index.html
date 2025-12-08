@@ -4,7 +4,7 @@
     <script>
       fetch("https://node-hello-world-woad.vercel.app/api/hello?name=Test")
         .then(res => res.json())
-        .then(data => console.log(data));
+        .then(data => console.log(data.message));
     </script>
     <title> testing</title>
   </head>
