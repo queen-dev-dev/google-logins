@@ -8,6 +8,6 @@
     "typescript": "^4.7.3"
   },
   "scripts": {
-  "build": "next build" // or vite build, vue-cli-service build, etc.
+  "build": "next build"
   }
 }
