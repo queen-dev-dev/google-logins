@@ -1,7 +1,11 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <script src="api/hello"></script>
+    <script>
+      fetch("https://node-hello-world-woad.vercel.app/api/hello?name=Test")
+        .then(res => res.json())
+        .then(data => console.log(data));
+    </script>
     <title> testing</title>
   </head>
   <body>
@@ -10,3 +14,7 @@
     </h1>
   </body>
 </html>
+
+
+
+
