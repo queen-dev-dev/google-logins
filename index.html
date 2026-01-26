@@ -4,7 +4,9 @@
     <script>
       fetch("https://node-hello-world-woad.vercel.app/api/hello")
         .then(res => res.json())
-        .then(data => console.log(data.message));
+        .then((data) => {
+          this.document.getElementById("replaceMe").innerHTML = `Welcome ${data}!`
+        });
     </script>
     <title> testing</title>
   </head>
@@ -12,6 +14,9 @@
     <h1>
       Hello!
     </h1>
+    <p id="replaceMe">
+      Welcome!
+    </p>
   </body>
 </html>
 
