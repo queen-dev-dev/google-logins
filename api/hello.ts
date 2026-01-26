@@ -10,5 +10,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).end();
   }
   const { name = 'World' } = req.query
+  console.log(name);
   return res.send(name);
 }
