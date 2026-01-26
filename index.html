@@ -3,8 +3,10 @@
   <head>
     <script>
       fetch("https://node-hello-world-woad.vercel.app/api/hello")
+        .then(res => res.json())
         .then((data) => {
-          this.document.getElementById("replaceMe").innerHTML = `Welcome ${data}!`
+          console.log(data)
+          //this.document.getElementById("replaceMe").innerHTML = `Welcome ${data}!`
         });
     </script>
     <title> testing</title>
