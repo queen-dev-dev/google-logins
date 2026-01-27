@@ -7,8 +7,10 @@
           console.log(res);
         })
         .then((data) => {
-          console.log(JSON.parse(data.name))
-          //this.document.getElementById("replaceMe").innerHTML = `Welcome ${data}!`
+          let newData = JSON.parse(data)
+          let NAME = newData.name
+          console.log(newData.name)
+          this.document.getElementById("replaceMe").innerHTML = `Welcome ${NAME}!`
         });
     </script>
     <title> testing</title>
