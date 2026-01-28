@@ -5,11 +5,7 @@
       fetch("https://node-hello-world-woad.vercel.app/api/hello?name=Devon")
         .then(res => res.json())
         .then((data) => {
-          console.log(data)
-          let newData = JSON.parse(data)
-          console.log(newData)
-          let NAME = newData.message
-          console.log(newData.message)
+          let NAME = data.message
           this.document.getElementById("replaceMe").innerHTML = `Welcome ${NAME}!`
         });
     </script>
