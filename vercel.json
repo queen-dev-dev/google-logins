@@ -1,8 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/testing",
+      "destination": "/testing.html"
     }
   ],
   "buildCommand": "npm run build",
