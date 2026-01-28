@@ -17,7 +17,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                filePath = path.join(__dirname,'/../public/testing.html')
             } else { // if neither source or about
                 res.writeHead(404, {'Content-Type': 'text/html'});
-                res.end("<h1> 404 NOT FOUND</h1>");
+                res.write('<h1> 404 NOT FOUND </h1>');
             }
             // needs to be optimised to exclude the else
             try{
