@@ -12,6 +12,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   const { name = 'World' } = req.query
   console.log(name);
   return res.json({
-    message: `Hello ${name}!`,
+    message: name,
   })
 }
