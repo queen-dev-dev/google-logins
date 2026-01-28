@@ -22,6 +22,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             // needs to be optimised to exclude the else
             try{
             const data = await fs.readFile(filePath)
+            if (typeof data === 'undefined') {
+                throw new Error ("NOT FOUND");
+            }
             res.setHeader('Content-type', 'text/html'); // Send HTML
             res.write(data); // puts the file into the response
             res.end(); // ends connection
