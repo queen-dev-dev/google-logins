@@ -23,6 +23,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.setHeader('Content-type', 'text/html') // Send HTML
         res.write(data); // puts the file into the response
         res.end() // ends connection
+        console.log('redirected by the server');
         } else{
             throw new Error('Method not allowed'); // Wrong method (eg POST) 
         }
