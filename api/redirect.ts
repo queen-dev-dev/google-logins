@@ -12,9 +12,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (req.method === 'GET') {
             let filePath; // to choose what HTML to send back
             if (req.url === '/') { // if regular (no extension)
-                filePath = path.join(__dirname,'/../public/index.html') // starts at directory, then goes back and finds public, file
+                filePath = path.join('/../public/index.html') // starts at directory, then goes back and finds public, file
             } else if (req.url === '/testing') { 
-               filePath = path.join(__dirname,'/../public/testing.html')
+               filePath = path.join('/../public/testing.html')
             } else { // if neither source or about
                 res.writeHead(404, {'Content-Type': 'text/html'});
                 res.write('<h1> 404 NOT FOUND </h1>');
@@ -45,4 +45,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.write("SERVER ERROR")
         res.end(); // sends server error message
     }
+
 }
