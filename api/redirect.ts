@@ -3,6 +3,9 @@ import fs from 'fs/promises'
 import path from 'path'
 import url from 'url'
 
+const __filename = url.fileURLToPath(import.meta.url); // file name
+const __dirname = path.dirname(__filename); // directory name
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -47,4 +50,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
 }
+
 
