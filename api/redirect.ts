@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import fs from 'fs'
+import fs from 'fs/promises'
 import path from 'path'
 import url from 'url'
 
