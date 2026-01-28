@@ -32,6 +32,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     } catch (error) { // if fail for some reason
         console.log(error); // error is logged to terminal
         res.writeHead(500, {'Content-Type': 'text/plain'}); // plaintext
-        res.end("SERVER ERROR"); // sends server error message
+        res.write("SERVER ERROR")
+        res.end(); // sends server error message
     }
 }
