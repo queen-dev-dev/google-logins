@@ -7,7 +7,9 @@
           console.log(res);
         })
         .then((data) => {
+          console.log(data)
           let newData = JSON.parse(data)
+          console.log(newData)
           let NAME = newData.name
           console.log(newData.name)
           this.document.getElementById("replaceMe").innerHTML = `Welcome ${NAME}!`
