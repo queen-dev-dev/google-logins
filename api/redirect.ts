@@ -20,7 +20,7 @@ If fail - throw error
 
 Send file after above
 
-chechRequest
+checkRequest
 Try Check req method -> if get, set type to GET in var
 Try url -> Get url and store in var
 
@@ -34,7 +34,6 @@ GET func -> Set ID to required
 let reqMethod = ''; // 'GET', 'POST' or 'OPTIONS'
 let reqUrl = ''; // 'index', 'testing'
 let validRequest = false;
-let fileData = ''
 
 const checkRequest = (req, res, next) => {
 
@@ -87,33 +86,38 @@ const contentTypeMiddleware = (req, res, next) => {
     }
     next();
 }
-
-const readHTMLFile = (fileToGet) = {
-    
+// do not call outside of file
+const _readHTMLFile = (fileToGet) => {
+    let fileData = '';
+    try{
+        fileData = await fs.readFile(fileToGet);
+    }
+    catch (error) {
+        fileData = 'ERROR';
+    }
+    finally {
+        if (typeof fileData === String) {
+            return 'Error finding file';
+        } else {
+            return fileData;
+        }
+    }
 }
 
-const testFunc = (fileToGet) = {
-    
 const getHTML = (req, res) => {
     if (reqUrl === '/') {
-        res.write()
+        const fileData = _readHTMLFile(path.join(__dirname, '/../public/index.html'));
+        return fileData;
     }
     else if (reqUrl === '/testing') {
-
+        const fileData = _readHTMLFile(path.join(__dirname, '/../public/testing.html'))
+        return fileData;
     }
     else {
-
+        return 'No file found'
     }
+    
 }
-
-
-
-
-
-
-
-
-
 
 
 
