@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/index.html"
+      "destination": "/public/index.html"
     },
     {
       "source": "/testing",
-      "destination": "/testing.html"
+      "destination": "/public/testing.html"
     }
   ],
   "buildCommand": "npm run build",
