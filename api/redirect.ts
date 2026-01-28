@@ -19,11 +19,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 res.writeHead(404, {'Content-Type': 'text/html'});
                 res.end("<h1> 404 NOT FOUND</h1>");
             }
-        const data = await fs.readFile(filePath) //reads the file path (find file)
-        res.setHeader('Content-type', 'text/html') // Send HTML
-        res.write(data); // puts the file into the response
-        res.end() // ends connection
-        console.log('redirected by the server');
+            // needs to be optimised to exclude the else
+            try{
+            const data = await fs.readFile(filePath)
+            res.setHeader('Content-type', 'text/html'); // Send HTML
+            res.write(data); // puts the file into the response
+            res.end(); // ends connection
+            console.log('redirected by the server');
+            }catch (error){
+                throw new Error(error)
+            }
+            const data = await fs.readFile(filePath) //reads the file path (find file)
+            
         } else{
             throw new Error('Method not allowed'); // Wrong method (eg POST) 
         }
