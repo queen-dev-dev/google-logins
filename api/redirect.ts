@@ -115,6 +115,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     })
   }
   catch (error){
+    console.log(error)
     fileData = '404 not found' ;
   }
   finally{
