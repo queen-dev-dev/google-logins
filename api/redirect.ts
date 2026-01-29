@@ -6,50 +6,26 @@ import url from 'url'
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
 
-let reqMethod = ''; // 'GET', 'POST' or 'OPTIONS'
-let reqUrl = ''; // 'index', 'testing'
-const checkRequest = (req, res, next) => {
+const checkRequest = (req, res) => {
 
     // method check
+    let reqMethod : string;
+    let reqUrl : string;
+    let error : string;
 
-    try{
-        if (req.method === 'GET') {
-            reqMethod = 'GET';
-        }
-        else if (req.method === 'POST') {
-            req.method = 'POST';
-        }
-        else if (req.method === 'OPTIONS') {
-            req.method = 'OPTIONS';
-        }
-        else {
-            throw new Error ('Invalid Method - use GET, POST or OPTIONS');
-        }
-    }
-    catch (error){
-        reqMethod = error;
-    }
+    if (req.method === 'GET') reqMethod = 'GET';
+    else if (req.method === 'POST') reqMethod = 'POST';
+    else if (req.method === 'OPTIONS') reqMethod = 'OPTIONS';
+    else error = 'Invalid Method - use GET, POST or OPTIONS';
 
     // url check
-
-    try{
-        if (req.url === '/') {
-            reqUrl = 'index';
-        }
-        else if (req.url === '/testing') {
-            reqUrl = 'testing';
-        }
-        else {
-            throw new Error ('404 Invalid URL - are you sure this is the correct address?');
-        }
-    }
-    catch (error) {
-        reqUrl = error;
-    }
-    next();
+    if (req.url === '/') reqUrl = 'index';
+    else if (req.url === '/testing') reqUrl = 'testing';
+    else error = '404 Invalid URL - are you sure this is the correct address?';
+   return {reqMethod, reqUrl, error};
 }
 
-const contentTypeMiddleware = (req, res, next) => {
+const contentTypeMiddleware = (res: VercelResponse, reqMethod: string) => {
     if (reqMethod === 'GET') {
         res.statusCode = 200
         res.setHeader('Content-Type', 'text/html')
@@ -64,7 +40,6 @@ const contentTypeMiddleware = (req, res, next) => {
         res.statusCode = 404;
         res.setHeader('Content-Type', 'text/plain');
     }
-    next();
 }
 // do not call outside of file
 const _readHTMLFile = async (fileToGet) => {
@@ -72,12 +47,12 @@ const _readHTMLFile = async (fileToGet) => {
         return await fs.readFile(fileToGet, "utf8");
     }
     catch  {
-        fileData = 'ERROR FINDING FILE';
+        return 'ERROR FINDING FILE';
     }
 
 }
 
-const getHTML = async (req, res) => {
+const getHTML = async (reqUrl: string) => {
     if (reqUrl === 'index') {
         return await _readHTMLFile(path.join(__dirname, '/../public/index.html'));
     }
@@ -96,25 +71,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   let fileData = ''
-  try{
-    checkRequest (req, res, () => {
-        contentTypeMiddleware(req, res, async () => {
-            if (typeof reqMethod != Object && typeof reqUrl != Object)
-                fileData = await getHTML(req, res);
-            else{
-                console.log('Error')
-                throw new Error('Invalid 404 type beat');
-            }
-        })
-    })
+  const { reqMethod, reqUrl, error } = checkRequest(req);
+
+  if (error) {
+    console.log(error);
+    res.statusCode = 400;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end(error);
+    return;
   }
-  catch (error){
-    console.log(error)
-    fileData = '404 not found' ;
-  }
-  res.write(fileData);
-  res.end();
-    
+
+  // set content type
+  contentTypeMiddleware(res, reqMethod!); // stops it from checking if null (it isn't)
+
+  // read the HTML file
+  fileData = await getHTML(reqUrl!);
+
+  res.end(fileData);
 }  /*
 Check if GET request
 Check URL
