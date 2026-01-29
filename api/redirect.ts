@@ -98,7 +98,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   let fileData = ''
   try{
     checkRequest (req, res, () => {
-        contentTypeMiddleware(req, res, () => {
+        contentTypeMiddleware(req, res, async () => {
             if (typeof reqMethod != Object && typeof reqUrl != Object)
                 fileData = await getHTML(req, res);
             else{
