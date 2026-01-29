@@ -91,6 +91,7 @@ const getHTML = (req, res) => {
         return fileData;
     }
     else {
+        console.log('cannot find file')
         return 'No file found'
     }
     
