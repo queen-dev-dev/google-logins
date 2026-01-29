@@ -11,18 +11,18 @@ const checkRequest = (req, res) => {
     // method check
     let reqMethod : string;
     let reqUrl : string;
-    let error : string;
+    let errors : string[] = [];
 
     if (req.method === 'GET') reqMethod = 'GET';
     else if (req.method === 'POST') reqMethod = 'POST';
     else if (req.method === 'OPTIONS') reqMethod = 'OPTIONS';
-    else error = 'Invalid Method - use GET, POST or OPTIONS';
+    else errors.push('Invalid Method - use GET, POST or OPTIONS');
 
     // url check
     if (req.url === '/') reqUrl = 'index';
     else if (req.url === '/testing') reqUrl = 'testing';
-    else error = '404 Invalid URL - are you sure this is the correct address?';
-   return {reqMethod, reqUrl, error};
+    else errors.push('404 Invalid URL - are you sure this is the correct address?');
+   return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null }; // returns errors joined if exist, or null otherwise
 }
 
 const contentTypeMiddleware = (res: VercelResponse, reqMethod: string) => {
@@ -73,7 +73,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   let fileData = ''
   const { reqMethod, reqUrl, error } = checkRequest(req);
 
-  if (error) {
+  if (error || !reqMethod || !reqUrl) {
     console.log(error);
     res.statusCode = 400;
     res.setHeader('Content-Type', 'text/plain');
@@ -82,30 +82,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // set content type
-  contentTypeMiddleware(res, reqMethod!); // stops it from checking if null (it isn't)
+  contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
 
   // read the HTML file
-  fileData = await getHTML(reqUrl!);
+  fileData = await getHTML(reqUrl);
 
   res.end(fileData);
-}  /*
-Check if GET request
-Check URL
-
-If fail - throw error
-
-Send file after above
-
-checkRequest
-Try Check req method -> if get, set type to GET in var
-Try url -> Get url and store in var
-
-Content type middleware - if working, set to html. else set to plaintext
-
-GET func -> Set ID to required
-
-try check req
-
-if error return ERROR 505
-
-*/
+}  
