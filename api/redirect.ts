@@ -51,15 +51,18 @@ const checkRequest = (req, res, next) => {
 
 const contentTypeMiddleware = (req, res, next) => {
     if (reqMethod === 'GET') {
-        res.setHeader(200, {'Content-Type': 'text/html'});
+        res.statusCode = 200
+        res.setHeader('Content-Type', 'text/html')
     }
     else if (reqMethod === 'POST' || reqMethod === 'OPTIONS') {
         console.log(`Unsupported method ${reqMethod} used.`);
-        res.setHeader(404, {'Content-Type': 'text/plain'}); // sets header without sending
+        res.statusCode = 403;
+        res.setHeader('Content-Type', 'text/plain'); // sets header without sending
     }
     else {
         console.log('Error finding details');
-        res.setHeader(404, {'Content-Type': 'text/plain'});
+        res.statusCode = 404;
+        res.setHeader('Content-Type', 'text/plain');
     }
     next();
 }
