@@ -64,7 +64,7 @@ const contentTypeMiddleware = (req, res, next) => {
     next();
 }
 // do not call outside of file
-const _readHTMLFile = (fileToGet) => {
+const _readHTMLFile = async (fileToGet) => {
     let fileData = '';
     try{
         fileData = await fs.readFile(fileToGet);
