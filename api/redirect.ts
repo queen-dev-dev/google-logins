@@ -82,11 +82,11 @@ const _readHTMLFile = async (fileToGet) => {
 }
 
 const getHTML = (req, res) => {
-    if (reqUrl === '/') {
+    if (reqUrl === 'index') {
         const fileData = _readHTMLFile(path.join(__dirname, '/../public/index.html'));
         return fileData;
     }
-    else if (reqUrl === '/testing') {
+    else if (reqUrl === 'testing') {
         const fileData = _readHTMLFile(path.join(__dirname, '/../public/testing.html'))
         return fileData;
     }
