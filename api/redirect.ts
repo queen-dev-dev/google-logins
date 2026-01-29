@@ -122,7 +122,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     fileData = '404 not found' ;
   }
   finally{
-    res.end(fileData);
+    res.write(fileData);
+    res.end();
     }
 }  /*
 Check if GET request
