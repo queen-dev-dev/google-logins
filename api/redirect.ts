@@ -68,30 +68,21 @@ const contentTypeMiddleware = (req, res, next) => {
 }
 // do not call outside of file
 const _readHTMLFile = async (fileToGet) => {
-    let fileData = '';
     try{
-        fileData = await fs.readFile(fileToGet);
+        return await fs.readFile(fileToGet, "utf8");
     }
-    catch (error) {
-        fileData = 'ERROR';
+    catch  {
+        fileData = 'ERROR FINDING FILE';
     }
-    finally {
-        if (typeof fileData === String) {
-            return 'Error finding file';
-        } else {
-            return fileData;
-        }
-    }
+
 }
 
-const getHTML = (req, res) => {
+const getHTML = async (req, res) => {
     if (reqUrl === 'index') {
-        const fileData = _readHTMLFile(path.join(__dirname, '/../public/index.html'));
-        return fileData;
+        return await _readHTMLFile(path.join(__dirname, '/../public/index.html'));
     }
     else if (reqUrl === 'testing') {
-        const fileData = _readHTMLFile(path.join(__dirname, '/../public/testing.html'))
-        return fileData;
+        return await _readHTMLFile(path.join(__dirname, '/../public/testing.html'))
     }
     else {
         console.log('cannot find file')
@@ -109,7 +100,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     checkRequest (req, res, () => {
         contentTypeMiddleware(req, res, () => {
             if (typeof reqMethod != Object && typeof reqUrl != Object)
-                fileData = getHTML(req, res);
+                fileData = await getHTML(req, res);
             else{
                 console.log('Error')
                 throw new Error('Invalid 404 type beat');
@@ -121,10 +112,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log(error)
     fileData = '404 not found' ;
   }
-  finally{
-    res.write(fileData.text());
-    res.end();
-    }
+  res.write(fileData);
+  res.end();
+    
 }  /*
 Check if GET request
 Check URL
