@@ -50,7 +50,7 @@ const checkRequest = (req, res, next) => {
 }
 
 const contentTypeMiddleware = (req, res, next) => {
-    if (reqUrl === 'GET') {
+    if (reqMethod === 'GET') {
         res.setHeader(200, {'Content-Type': 'text/html'});
     }
     else if (reqMethod === 'POST' || reqMethod === 'OPTIONS') {
