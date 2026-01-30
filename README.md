@@ -1,12 +1,11 @@
 Currently:
 
 Redirects you when using index and testing to specific pages
-
-
+api/hello is still available to get api requests
 
 TODO:
 
-Refactor api/redirect for throwing errors
-
-
-Once above is done it'll be time to integrate google logins :D
+> Integrate google logins
+> SessionID/ login cookie
+> UserID cookie
+> Test - only allow access to /testing if cookie exists
