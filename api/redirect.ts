@@ -61,7 +61,7 @@ const getHTML = async (reqUrl: string) => {
         return await _readHTMLFile(path.join(__dirname, '/../public/testing.html'));
     }
     else if (reqUrl === 'login') {
-        return await _readHTMLFile(path.jion(__dirname, '/../public/login.html'));
+        return await _readHTMLFile(path.join(__dirname, '/../public/login.html'));
     }
     else {
         console.log('cannot find file')
@@ -94,3 +94,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.end(fileData);
 
 }  
+
