@@ -5,10 +5,10 @@ api/hello is still available to get api requests
 
 TODO:
 
-Integrate google logins
+>Integrate google logins
 
-SessionID/ login cookie
+>SessionID/ login cookie
 
-UserID cookie
+>UserID cookie
 
-Test - only allow access to /testing if cookie exists
+>Test - only allow access to /testing if cookie exists
