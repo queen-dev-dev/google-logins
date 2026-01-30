@@ -21,6 +21,7 @@ const checkRequest = (req, res) => {
     // url check
     if (req.url === '/') reqUrl = 'index';
     else if (req.url === '/testing') reqUrl = 'testing';
+    else if (req.url === '/login') reqUrl = 'login';
     else errors.push('404 Invalid URL - are you sure this is the correct address?');
    return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null }; // returns errors joined if exist, or null otherwise
 }
@@ -57,7 +58,10 @@ const getHTML = async (reqUrl: string) => {
         return await _readHTMLFile(path.join(__dirname, '/../public/index.html'));
     }
     else if (reqUrl === 'testing') {
-        return await _readHTMLFile(path.join(__dirname, '/../public/testing.html'))
+        return await _readHTMLFile(path.join(__dirname, '/../public/testing.html'));
+    }
+    else if (reqUrl === 'login') {
+        return await _readHTMLFile(path.jion(__dirname, '/../public/login.html'));
     }
     else {
         console.log('cannot find file')
@@ -88,4 +92,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   fileData = await getHTML(reqUrl);
 
   res.end(fileData);
+
 }  
