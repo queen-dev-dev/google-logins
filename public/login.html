@@ -14,19 +14,19 @@
 </button>
 
 <script>
-  function handleCredentialResponse(response) {
-    console.log("Encoded JWT ID token:", response.credential);
-    // Send this token to your server for verification/login
-  }
+  let tokenClient;
 
-  window.onload = function () {
-    google.accounts.id.initialize({
-      client_id: "726944614564-lgomal40qlu1j1r3cs0cgf902mkk03mf.apps.googleusercontent.com",
-      callback: handleCredentialResponse
+  window.onload = function() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: '726944614564-lgomal40qlu1j1r3cs0cgf902mkk03mf.apps.googleusercontent.com',
+      scope: 'email profile openid',
+      callback: (tokenResponse) => {
+        console.log('Access Token:', tokenResponse.access_token);
+      }
     });
 
-    document.getElementById("custom-google-login").addEventListener("click", function() {
-      google.accounts.id.prompt(); // triggers the One Tap or sign-in flow
+    document.getElementById('custom-google-login').addEventListener('click', () => {
+      tokenClient.requestAccessToken({prompt: 'consent'}); // triggers popup
     });
   }
 </script>
