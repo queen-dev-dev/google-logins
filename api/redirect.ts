@@ -6,11 +6,11 @@ import url from 'url'
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
 
-const checkRequest = (req, res) => {
+const checkRequest = (req) => {
 
     // method check
-    let reqMethod : string;
-    let reqUrl : string;
+    let reqMethod : string | undefined;
+    let reqUrl : string | undefined;
     let errors : string[] = [];
 
     if (req.method === 'GET') reqMethod = 'GET';
@@ -23,7 +23,7 @@ const checkRequest = (req, res) => {
     else if (req.url === '/testing') reqUrl = 'testing';
     else if (req.url === '/login') reqUrl = 'login';
     else errors.push('404 Invalid URL - are you sure this is the correct address?');
-   return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null }; // returns errors joined if exist, or null otherwise
+    return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null }; // returns errors joined if exist, or null otherwise
 }
 
 const contentTypeMiddleware = (res: VercelResponse, reqMethod: string) => {
@@ -84,14 +84,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.end(error);
     return;
   }
-
   // set content type
   contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
-
   // read the HTML file
   fileData = await getHTML(reqUrl);
-
   res.end(fileData);
-
 }  
 
