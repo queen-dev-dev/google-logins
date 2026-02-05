@@ -11,6 +11,11 @@
   "scripts": {
     "build": "echo 'No build needed'",
     "start": "node index.js"
+  },
+  "dependencies": {
+    "cookie": "1.1.1",
+    "google-auth-library": "10.5.0",
+    "@vercel/node": "5.5.30"
   }
 }
 
