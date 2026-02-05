@@ -24,7 +24,7 @@ const oauth2Client = new OAuth2Client(
   REDIRECT_URI
 );
 
-const server = http.createServer(async (req, res) => {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const url = new URL(req.url, `http://${req.headers.host}`);
 
   //  Start Google login
@@ -101,4 +101,4 @@ const server = http.createServer(async (req, res) => {
   // 404
   res.writeHead(404);
   res.end("Not found");
-});
+};
