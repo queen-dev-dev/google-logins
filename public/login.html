@@ -1,35 +1,21 @@
 <!DOCTYPE HTML>
 <html>
-  <head>
-    <title> LOGIN </title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-  </head>
-  <body>
-    <h1>
-      Login Centre
-    </h1>
+
+<head>
+  <title> LOGIN </title>
+</head>
+
+<body>
+  <h1>
+    Login Centre
+  </h1>
+  <a href="/auth/google">
     <button id="custom-google-login">
-  <img src="../images/lockedInAlien.jpg" alt="Google logo" style="height:20px; vertical-align:middle;">
-  Sign in with Google
-</button>
+      <img src="../images/lockedInAlien.jpg" alt="Google logo" style="height:20px; vertical-align:middle;">
+      Sign in with Google
+    </button>
+  </a>
+  </div>
+</body>
 
-<script>
-  let tokenClient;
-
-  window.onload = function() {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: '726944614564-lgomal40qlu1j1r3cs0cgf902mkk03mf.apps.googleusercontent.com',
-      scope: 'email profile openid',
-      callback: (tokenResponse) => {
-        console.log('Access Token:', tokenResponse.access_token);
-      }
-    });
-
-    document.getElementById('custom-google-login').addEventListener('click', () => {
-      tokenClient.requestAccessToken({prompt: 'consent'}); // triggers popup
-    });
-  }
-</script>
-</div>
-  </body>
 </html>
