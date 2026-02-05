@@ -31,6 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       prompt: "select_account",
       state,
     });
+    console.log("Auth URL:", authUrl);
 
     res.setHeader(
       "Set-Cookie",
