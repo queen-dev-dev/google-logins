@@ -6,9 +6,9 @@ import url from 'url'
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
 
-const checkRequest = (req) => {
 
-    // method check
+// method check
+const checkRequest = (req) => {
     let reqMethod : string | undefined;
     let reqUrl : string | undefined;
     let errors : string[] = [];
@@ -26,6 +26,7 @@ const checkRequest = (req) => {
     return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null }; // returns errors joined if exist, or null otherwise
 }
 
+// content type check
 const contentTypeMiddleware = (res: VercelResponse, reqMethod: string) => {
     if (reqMethod === 'GET') {
         res.statusCode = 200
@@ -53,6 +54,8 @@ const _readHTMLFile = async (fileToGet) => {
 
 }
 
+// gets specific html file
+// swap to switch case when using an array instead of single lines
 const getHTML = async (reqUrl: string) => {
     if (reqUrl === 'index') {
         return await _readHTMLFile(path.join(__dirname, '/../public/index.html'));
