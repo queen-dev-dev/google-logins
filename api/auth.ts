@@ -25,14 +25,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   //  Start Google login
   if (action === "login") {
-    console.log(REDIRECT_URI);
     const state = crypto.randomUUID();
     const authUrl = oauth2Client.generateAuthUrl({
       scope: ["openid", "email", "profile"],
       prompt: "select_account",
       state,
     });
-    console.log("Auth URL:", authUrl);
 
     res.setHeader(
       "Set-Cookie",
