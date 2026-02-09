@@ -5,8 +5,8 @@ import type { VercelRequest, VercelResponse} from '@vercel/node'
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = process.env.VERCEL_URL
-  ?  `https://${process.env.VERCEL_URL}/api/auth?action=callback`
+const REDIRECT_URI = process.env.REDIRECT_URI
+  ?  `https://${process.env.REDIRECT_URI}/api/auth?action=callback`
   : "http://localhost:3000/api/auth?action=callback"
 ;
 
