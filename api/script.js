@@ -5,4 +5,8 @@ dotenv.config({path: ".env.local"})
 
 const client = new ConvexHttpClient(process.env["CONVEX_URL"]);
 
-client.query(api.tasks.get).then(console.log);
+
+
+export default async function () {
+    client.query(api.tasks.get).then(console.log);
+}
