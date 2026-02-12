@@ -8,6 +8,10 @@
     "@vercel/node": "^2.9.6",
     "typescript": "^4.7.3"
   },
+   "scripts": {
+    "build": "npx convex deploy --cmd 'npm run build''",
+    "start": "node index.js"
+  },
   "dependencies": {
     "cookie": "1.1.1",
     "google-auth-library": "10.5.0",
