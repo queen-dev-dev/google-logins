@@ -9,7 +9,7 @@
     "typescript": "^4.7.3"
   },
    "scripts": {
-    "build": "npx convex deploy --cmd 'npm run build''",
+    "build": "npx convex deploy --cmd 'npm run build'",
     "start": "node index.js"
   },
   "dependencies": {
