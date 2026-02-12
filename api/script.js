@@ -8,5 +8,7 @@ const client = new ConvexHttpClient(process.env["CONVEX_URL"]);
 
 
 export default async function () {
-    return await client.query(api.tasks.get).then(console.log);
+    const result = await client.query(api.tasks.get);
+    console.log(result);
+    return result;
 }
