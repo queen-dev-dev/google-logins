@@ -3,12 +3,14 @@ import { api } from "../convex/_generated/api.js";
 
 const client = new ConvexHttpClient(process.env.CONVEX_URL);
 
-export default async function () {
+export default async function (req, res) {
     try {
         console.log("CONVEX_URL:", process.env.CONVEX_URL);
         console.log("Calling query...");
         const result = await client.query(api.tasks.get);
         console.log("Result:", result);
+        res.statusCode = 200;
+        res.send(JSON.stringify(result));
         return {
             statusCode: 200,
             body: JSON.stringify(result)
