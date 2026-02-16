@@ -2,7 +2,13 @@ import { OAuth2Client } from "google-auth-library";
 import crypto from "crypto"
 import * as cookie from 'cookie';
 import type { VercelRequest, VercelResponse} from '@vercel/node'
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "../convex/_generated/api.js";
 
+
+
+
+const CONVEX_URL = process.env.CONVEX_URL as string
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI
@@ -19,6 +25,8 @@ const oauth2Client = new OAuth2Client(
   CLIENT_SECRET,
   REDIRECT_URI
 );
+
+const convexClient = new ConvexHttpClient(CONVEX_URL);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const {action} = req.query;
@@ -71,10 +79,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!payload) throw new Error ("No token payload")
 
       const googleUserId = payload.sub;
-      const email = payload.email;
-      const name = payload.name;
+      const email = payload.email as string;
+      const name = payload.name as string;
 
       // TODO: store googleUserId in DB
+      await convexClient.mutation(api.userLogin.addUser, {
+        googleID: googleUserId,
+        email: email,
+        name: name
+      })
+      console.log("Stored in convex DB");
 
       res.status(200).json({
           googleUserId,
