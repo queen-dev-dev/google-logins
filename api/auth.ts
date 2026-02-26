@@ -83,8 +83,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const email = payload.email as string;
       const name = payload.name as string;
 
-
-      console.log(typeof await convexClient.query(api.userLogin.getGoogleIDs)) // returns a map
+      const allGoogleIDs = await convexClient.query(api.userLogin.getGoogleIDs);
+      console.log(`All google IDs: ${allGoogleIDs}`) // returns an object
+      console.log(`Typeof google id: ${typeof allGoogleIDs}`);
       await convexClient.mutation(api.userLogin.addUser, {
         googleID: googleUserId,
         email: email,
