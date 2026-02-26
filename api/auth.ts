@@ -4,6 +4,7 @@ import * as cookie from 'cookie';
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
+import { Map } from "typescript";
 
 
 
@@ -82,8 +83,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const email = payload.email as string;
       const name = payload.name as string;
 
-      // Check DB for users before actually storing!
-      console.log(await convexClient.query(api.userLogin.getGoogleIDs))
+
+      console.log(typeof await convexClient.query(api.userLogin.getGoogleIDs)) // returns a map
       await convexClient.mutation(api.userLogin.addUser, {
         googleID: googleUserId,
         email: email,
