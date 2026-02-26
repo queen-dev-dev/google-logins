@@ -84,7 +84,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const name = payload.name as string;
 
       const allGoogleIDs : Array = await convexClient.query(api.userLogin.getGoogleIDs); 
-      for (i = 0; i > allGoogleIDs.length; i++) {
+      for (let i = 0; i > allGoogleIDs.length; i++) {
           console.log(allGoogleIDs[i])
       }
       await convexClient.mutation(api.userLogin.addUser, {
