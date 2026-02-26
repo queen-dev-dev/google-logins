@@ -19,6 +19,7 @@ export const addUser = mutation({
 export const readFull = query({
     args:{},
     handler: async (ctx) => {
-        return await ctx.db.query("BG_Testing").collect();
+        return await ctx.db.query("BG_TESTING").collect();
     }
+
 })
