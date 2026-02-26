@@ -23,3 +23,12 @@ export const readFull = query({
     }
 
 })
+
+export const getGoogleIDs = query({
+    args: {},
+    handler: async (ctx) => {
+        const fullList = ctx.db.query("BG_TESTING").collect();
+        const googleIDs = (await fullList).map((user) => user.googleID);
+        return googleIDs;
+    }
+})
