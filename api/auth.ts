@@ -83,7 +83,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const name = payload.name as string;
 
       // Check DB for users before actually storing!
-      console.log(convexClient.query(api.userLogin.readFull))
+      console.log(await convexClient.query(api.userLogin.readFull))
       await convexClient.mutation(api.userLogin.addUser, {
         googleID: googleUserId,
         email: email,
