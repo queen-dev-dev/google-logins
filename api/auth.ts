@@ -1,7 +1,7 @@
 import { OAuth2Client } from "google-auth-library";
 import crypto from "crypto"
 import * as cookie from 'cookie';
-import type { VercelRequest, VercelResponse} from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
 
@@ -12,12 +12,12 @@ const CONVEX_URL = process.env.CONVEX_URL as string
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI
-  ?  `https://${process.env.REDIRECT_URI}/api/auth?action=callback`
+  ? `https://${process.env.REDIRECT_URI}/api/auth?action=callback`
   : "http://localhost:3000/api/auth?action=callback"
-;
+  ;
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
-  throw new Error ("Missing Google OAuth env vars")
+  throw new Error("Missing Google OAuth env vars")
 }
 
 const oauth2Client = new OAuth2Client(
@@ -29,7 +29,7 @@ const oauth2Client = new OAuth2Client(
 const convexClient = new ConvexHttpClient(CONVEX_URL);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const {action} = req.query;
+  const { action } = req.query;
 
   //  Start Google login
   if (action === "login") {
@@ -54,7 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const returnedState = req.query.state as string;
     const cookies = cookie.parse(req.headers.cookie as string ?? "");
     const storedState = cookies.oauth_state;
-    
+
     if (!code) {
       res.status(400).send("Missing auth code")
       return;
@@ -76,13 +76,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
 
       const payload = ticket.getPayload();
-      if (!payload) throw new Error ("No token payload")
+      if (!payload) throw new Error("No token payload")
 
       const googleUserId = payload.sub;
       const email = payload.email as string;
       const name = payload.name as string;
 
-      // TODO: store googleUserId in DB
+      // Check DB for users before actually storing!
+      console.log(convexClient.query(api.userLogin.readFull))
       await convexClient.mutation(api.userLogin.addUser, {
         googleID: googleUserId,
         email: email,
@@ -91,10 +92,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.log("Stored in convex DB");
 
       res.status(200).json({
-          googleUserId,
-          email,
-          name,
-        });
+        googleUserId,
+        email,
+        name,
+      });
     } catch (err) {
       console.error(err);
       res.status(500).send("Authentication failed");
