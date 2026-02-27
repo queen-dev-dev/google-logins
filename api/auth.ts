@@ -5,7 +5,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
 import { Map } from "typescript";
-import { randomBytes } from "crypto"
+import { randomBytes } from "crypto";
 
 
 
@@ -85,8 +85,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const payload = ticket.getPayload();
       if (!payload) throw new Error("No token payload")
 
-      const buf = randomBytes(32);
-      const SSToken = buf.tostring('hex');
+      const SSToken = randomBytes(32).toString('hex');
       const googleUserId = payload.sub;
       const email = payload.email as string;
       const name = payload.name as string;
