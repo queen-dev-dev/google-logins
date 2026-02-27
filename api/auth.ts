@@ -29,7 +29,7 @@ const oauth2Client = new OAuth2Client(
 
 const convexClient = new ConvexHttpClient(CONVEX_URL);
 
-async function createTokenCookie(token) { // buffer.tostring(hex)
+async function createTokenCookie(token, res) { // buffer.tostring(hex)
   res.setHeader('Set-Cookie', `SSToken=${token})}; HttpOnly; Secure ; Path=/;SameSite = lax ; Max-Age=2592000`);
 }
 
@@ -103,9 +103,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         tokenExpiryDate: tokenExpiryDate
       })
       console.log("Stored in convex DB");
-      createTokenCookie(SSToken);
-      res.writeHead(200, { 'content-type': 'application/json' });
-      res.end();
+      createTokenCookie(SSToken, res);
+      res.status(200).json({
+        googleUserId,
+        email,
+        name,
+        SSToken,
+        tokenExpiryDate
+      });
     } catch (err) {
       console.error(err);
       res.status(500).send("Authentication failed");
