@@ -6,9 +6,10 @@ Create a cryptographically random string. This is their token — it means nothi
 ----
 3. Store the Token in Convex
 Save a record containing the token string, the user's ID, and an expiresAt timestamp (e.g. 30 days from now). -> Additional fields to be stored along with other data
+Done!
 
 4. Set the Cookie
-Send the token to the browser inside an HttpOnly, Secure, SameSite=Lax cookie with a matching Max-Age. The browser stores it and will send it automatically on every future request. -> Self explanatory
+Send the token to the browser inside a HttpOnly, Secure, SameSite=Lax cookie with a matching Max-Age. The browser stores it and will send it automatically on every future request. -> Self explanatory
 
 5. User Makes a Request to a Protected Route
 The browser sends the request with the cookie attached automatically.  -> Already done
