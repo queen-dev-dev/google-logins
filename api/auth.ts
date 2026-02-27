@@ -85,7 +85,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const payload = ticket.getPayload();
       if (!payload) throw new Error("No token payload")
 
-      const SSToken = randomBytes(32).tostring('hex');
+      const buf = randomBytes(32);
+      const SSToken = buf.tostring('hex');
       const googleUserId = payload.sub;
       const email = payload.email as string;
       const name = payload.name as string;
