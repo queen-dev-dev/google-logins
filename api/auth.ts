@@ -5,7 +5,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
 import { Map } from "typescript";
-
+import { randomBytes } from "crypto"
 
 
 
@@ -28,6 +28,14 @@ const oauth2Client = new OAuth2Client(
 );
 
 const convexClient = new ConvexHttpClient(CONVEX_URL);
+
+async function createCookie() {
+  const buf = randomBytes(32);
+  console.log(buf.toString('hex'));
+  res.setHeader('Set-Cookie', `SSToken=${buf.toString("hex")}; HttpOnly; Secure ; Path=/;SameSite = lax ; Max-Age=3600`);
+}
+
+
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { action } = req.query;
@@ -78,14 +86,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const payload = ticket.getPayload();
       if (!payload) throw new Error("No token payload")
+      const SSToken = randomBytes(32)
 
       const googleUserId = payload.sub;
       const email = payload.email as string;
       const name = payload.name as string;
 
-      const allGoogleIDs : Array = await convexClient.query(api.userLogin.getGoogleIDs); 
+      const allGoogleIDs: Array = await convexClient.query(api.userLogin.getGoogleIDs);
       for (let i = 0; i < allGoogleIDs.length; i++) {
-          console.log(allGoogleIDs[i])
+        console.log(allGoogleIDs[i])
       }
       await convexClient.mutation(api.userLogin.addUser, {
         googleID: googleUserId,
