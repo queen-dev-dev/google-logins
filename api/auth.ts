@@ -104,13 +104,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       })
       console.log("Stored in convex DB");
       createTokenCookie(SSToken);
-      res.status(200).json({
-        googleUserId,
-        email,
-        name,
-        SSToken,
-        tokenExpiryDate
-      });
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end();
     } catch (err) {
       console.error(err);
       res.status(500).send("Authentication failed");
