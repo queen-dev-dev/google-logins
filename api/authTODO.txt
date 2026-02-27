@@ -1,0 +1,34 @@
+1. First Sign In (OAuth Callback Succeeds)
+Google confirms who the user is. You now know their identity for this one moment. -> Already done
+
+2. Generate a Session Token
+Create a cryptographically random string. This is their token — it means nothing on its own, it's just a unique unguessable key. -> Crypto module (random bytes)
+
+3. Store the Token in Convex
+Save a record containing the token string, the user's ID, and an expiresAt timestamp (e.g. 30 days from now). -> Additional fields to be stored along with other data
+
+4. Set the Cookie
+Send the token to the browser inside an HttpOnly, Secure, SameSite=Lax cookie with a matching Max-Age. The browser stores it and will send it automatically on every future request. -> Self explanatory
+
+5. User Makes a Request to a Protected Route
+The browser sends the request with the cookie attached automatically.  -> Already done
+
+6. Server Reads the Cookie
+Your server pulls the token string out of the cookie header. -> Search for cookies
+
+7. Look Up the Token in Convex
+Query for a session record matching that token string. -> DB Query
+
+Not found → reject, redirect to login
+Found but expired → delete the record, clear the cookie, redirect to login
+Found and expiring soon → continue to step 8, but also issue a new token (go back to step 2)
+Found and valid → continue to step 9
+
+8. (If Refreshing) Issue a New Token
+Generate a fresh token, save it to Convex with a new expiresAt, overwrite the cookie with the new token, and delete the old record. The user never notices anything happened. -> If outdated
+
+9. Attach the User to the Request
+You now know who's making the request. Fetch their data, enforce their permissions, return the right response. -> Middleware to check during routing (for protected pages)
+
+10. Logout
+User clicks logout. Delete the session record from Convex, set the cookie's Max-Age to 0 so the browser discards it immediately. The token no longer exists anywhere — even if someone had copied it, it's useless. -> Self explanatory
