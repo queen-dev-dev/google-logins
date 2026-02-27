@@ -2,22 +2,26 @@ import { query, mutation } from './_generated/server';
 import { v } from 'convex/values'
 
 export const addUser = mutation({
-    args:{
+    args: {
         googleID: v.string(),
         email: v.string(),
-        name: v.string()
+        name: v.string(),
+        ssToken: v.string(),
+        tokenExpiryDate: v.number()
     },
-    handler: async(ctx, args) => {
+    handler: async (ctx, args) => {
         await ctx.db.insert("BG_TESTING", {
             googleID: args.googleID,
             email: args.email,
-            name: args.name
+            name: args.name,
+            ssToken: args.ssToken,
+            tokenExpiryDate: args.tokenExpiryDate
         })
     }
 })
 
 export const readFull = query({
-    args:{},
+    args: {},
     handler: async (ctx) => {
         return await ctx.db.query("BG_TESTING").collect();
     }

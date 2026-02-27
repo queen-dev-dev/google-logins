@@ -3,7 +3,7 @@ Google confirms who the user is. You now know their identity for this one moment
 
 2. Generate a Session Token
 Create a cryptographically random string. This is their token — it means nothing on its own, it's just a unique unguessable key. -> Crypto module (random bytes)
-
+----
 3. Store the Token in Convex
 Save a record containing the token string, the user's ID, and an expiresAt timestamp (e.g. 30 days from now). -> Additional fields to be stored along with other data
 

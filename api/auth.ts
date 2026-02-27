@@ -29,10 +29,8 @@ const oauth2Client = new OAuth2Client(
 
 const convexClient = new ConvexHttpClient(CONVEX_URL);
 
-async function createCookie() {
-  const buf = randomBytes(32);
-  console.log(buf.toString('hex'));
-  res.setHeader('Set-Cookie', `SSToken=${buf.toString("hex")}; HttpOnly; Secure ; Path=/;SameSite = lax ; Max-Age=3600`);
+async function createTokenCookie(token) { // buffer.tostring(hex)
+  res.setHeader('Set-Cookie', `SSToken=${token})}; HttpOnly; Secure ; Path=/;SameSite = lax ; Max-Age=3600`);
 }
 
 
@@ -86,11 +84,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const payload = ticket.getPayload();
       if (!payload) throw new Error("No token payload")
-      const SSToken = randomBytes(32)
 
+      const SSToken = randomBytes(32).tostring('hex');
       const googleUserId = payload.sub;
       const email = payload.email as string;
       const name = payload.name as string;
+      const tokenExpiryDate = new Date();
+      tokenExpiryDate.setDate(tokenExpiryDate.getDate() + 30);
 
       const allGoogleIDs: Array = await convexClient.query(api.userLogin.getGoogleIDs);
       for (let i = 0; i < allGoogleIDs.length; i++) {
@@ -99,7 +99,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       await convexClient.mutation(api.userLogin.addUser, {
         googleID: googleUserId,
         email: email,
-        name: name
+        name: name,
+        ssToken: SSToken,
+        tokenExpiryDate: tokenExpiryDate
       })
       console.log("Stored in convex DB");
 
