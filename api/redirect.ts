@@ -84,6 +84,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  checkCookies(req);
   let fileData = ''
   const { reqMethod, reqUrl, error } = checkRequest(req);
 
