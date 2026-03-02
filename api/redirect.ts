@@ -8,7 +8,7 @@ const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
 
 const checkCookies = (req: Request) => {
-    const cookies = cookie.parse(req.headers.cookie as string ?? "");
+    const cookies = cookie.parse(req.headers.cookie ?? "");
     console.log(`all cookies: ${cookies}`);
 }
 
