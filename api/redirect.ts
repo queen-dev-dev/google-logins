@@ -7,7 +7,7 @@ import * as cookie from 'cookie'
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
 
-const checkCookies = (req: Request) => {
+const checkCookies = (req: VercelRequestRequest) => {
     const cookies = cookie.parse(req.headers.cookie ?? "");
     console.log(`all cookies: ${cookies}`);
 }
