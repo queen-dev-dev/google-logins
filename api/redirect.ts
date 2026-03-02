@@ -7,7 +7,7 @@ import * as cookie from 'cookie'
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
 
-const checkCookies = (req: VercelRequestRequest) => {
+const checkCookies = (req: VercelRequest) => {
     const cookies = cookie.parse(req.headers.cookie ?? "");
     console.log(`all cookies: ${cookies}`);
 }
@@ -101,4 +101,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   fileData = await getHTML(reqUrl);
   res.end(fileData);
 }  
+
 
