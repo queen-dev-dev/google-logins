@@ -2,9 +2,16 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import fs from 'fs/promises'
 import path from 'path'
 import url from 'url'
+import * as cookie from 'cookie'
 
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
+
+const checkCookies = (req: Request) => {
+    const cookies = cookie.parse(req.headers.cookie as string ?? "");
+    console.log(`all cookies: ${cookies}`);
+}
+
 
 
 // method check

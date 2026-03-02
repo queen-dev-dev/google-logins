@@ -33,3 +33,13 @@ You now know who's making the request. Fetch their data, enforce their permissio
 
 10. Logout
 User clicks logout. Delete the session record from Convex, set the cookie's Max-Age to 0 so the browser discards it immediately. The token no longer exists anywhere — even if someone had copied it, it's useless. -> Self explanatory
+
+6-9 is done in redirect.ts
+6 -> Reading cookie
+7-> Query convex for token + action
+8-> Issue token
+9-> Attatch user to request on protected areas
+
+Middleware for 6/7 
+8 is seperate (function)
+9 is other middleware acting only on certain paths
