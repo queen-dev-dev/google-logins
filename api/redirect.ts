@@ -3,15 +3,31 @@ import fs from 'fs/promises'
 import path from 'path'
 import url from 'url'
 import * as cookie from 'cookie'
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "../convex/_generated/api.js";
 
+const getAllGoogleIds = api.userLogin.getGoogleIDs;
+const convexClient = new ConvexHttpClient(process.env.CONVEX_URL as string);
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
 
-const checkCookies = (req: VercelRequest) => {
-    if (req.headers.cookie) {
-        const cookies = cookie.parse(req.headers.cookie); // returns object, have to JSON.stringify if you want it as a string
-        console.log(`all cookies: ${JSON.stringify(cookies)}`);
+const checkCookies = async (req: VercelRequest) => {
+    let cookies;
+    if (!req.headers.cookie) {
+        return(new Error("No cookies found")) ;// returns object
     }
+    cookies = cookie.parse(req.headers.cookie);
+    if (!cookies.SStoken) {
+        return "No Session token found";
+    }
+    let SSToken = cookies.SStoken;
+    const allGoogleIDs : number[] = await convexClient.query(getAllGoogleIds); // array of numbers
+      for (let i = 0; i < allGoogleIDs.length; i++) {
+        if (parseInt(SSToken, 10) === allGoogleIDs[i]) {
+            console.log(`Found ${allGoogleIDs[i]} at position ${i}`);
+            return allGoogleIDs[i];
+        }
+      }
 }
 
 
@@ -86,8 +102,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  checkCookies(req);
-  let fileData = ''
+  let cookies = checkCookies(req);
+  let fileData : string;
   const { reqMethod, reqUrl, error } = checkRequest(req);
 
   if (error || !reqMethod || !reqUrl) {
@@ -103,9 +119,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   fileData = await getHTML(reqUrl);
   res.end(fileData);
 }  
-
-
-
-
 
 
