@@ -17,6 +17,7 @@ const checkCookies = async (req: VercelRequest) => {
         return(new Error("No cookies found")) ;// returns object
     }
     cookies = cookie.parse(req.headers.cookie);
+    console.log(cookies)
     if (!cookies.SStoken) {
         return "No Session token found";
     }
@@ -109,20 +110,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { reqMethod, reqUrl, error } = checkRequest(req);
 
   if (error || !reqMethod || !reqUrl) {
-    console.error(error);
+    console.log(error);
     res.statusCode = 400;
     res.setHeader('Content-Type', 'text/plain');
     res.end(error);
     return;
   }
-  console.warn("Hello")
   // set content type
+  console.warn("Hello")
   contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
   // read the HTML file
   fileData = await getHTML(reqUrl);
   res.end(fileData);
 }  
-
-
 
 
