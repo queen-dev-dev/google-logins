@@ -6,7 +6,7 @@ import * as cookie from 'cookie'
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
 
-const getAllGoogleIds = api.userLogin.getGoogleIDs;
+const getAllTokens = api.userLogin.getSSToken;
 const convexClient = new ConvexHttpClient(process.env.CONVEX_URL as string);
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
@@ -22,7 +22,7 @@ const checkCookies = async (req: VercelRequest) => {
         return(new Error("No Session token found"));
     }
     let SSToken = cookies.SSToken as string;
-    const allGoogleIDs : number[] = await convexClient.query(getAllGoogleIds); // array of numbers
+    const allGoogleIDs : number[] = await convexClient.query(getAllTokens); // array of numbers
       for (let i = 0; i < allGoogleIDs.length; i++) {
         if (parseInt(SSToken, 10) === allGoogleIDs[i]) {
             console.log(`Found ${allGoogleIDs[i]} at position ${i}`);
