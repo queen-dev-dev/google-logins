@@ -103,6 +103,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   let cookies = checkCookies(req);
+  console.log(cookies);
   let fileData : string;
   const { reqMethod, reqUrl, error } = checkRequest(req);
 
