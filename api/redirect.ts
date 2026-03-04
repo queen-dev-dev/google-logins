@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename); // directory name
 const checkCookies = (req: VercelRequest) => {
     console.log(req.headers);
     console.log(req.headers.cookie);
+    console.log(typeof req.headers.cookie);
     const cookies = cookie.parse(req.headers.cookie ?? "");
     console.log(`all cookies: ${cookies}`);
 }
@@ -103,6 +104,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   fileData = await getHTML(reqUrl);
   res.end(fileData);
 }  
+
 
 
 
