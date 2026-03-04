@@ -36,3 +36,12 @@ export const getGoogleIDs = query({
         return googleIDs;
     }
 })
+
+export const getSSToken = query({
+    args: {},
+    handler: async(ctx) => {
+        const fullList = ctx.db.query("BG_TESTING").collect();
+        const allTokens = (await fullList).map((user) => user.ssToken);
+        return allTokens;
+    }
+})
