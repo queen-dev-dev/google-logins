@@ -6,18 +6,18 @@
   "devDependencies": {
     "@types/node": "^24.0.0",
     "@vercel/node": "^2.9.6",
-    "typescript": "^4.7.3"
+    "typescript": "^5.9.3"
   },
-   "scripts": {
+  "scripts": {
     "build": "npx convex deploy",
     "start": "node index.js"
   },
   "dependencies": {
+    "@vercel/node": "5.5.30",
+    "convex": "^1.31.7",
     "cookie": "1.1.1",
     "dotenv": "^17.2.4",
     "google-auth-library": "10.5.0",
-    "@vercel/node": "5.5.30",
-    "convex": "1.31.7"
+    "typescript": "^5.9.3"
   }
 }
-
