@@ -17,7 +17,7 @@ const checkCookies = async (req: VercelRequest) => {
         return(new Error("No cookies found")) ;// returns object
     }
     cookies = cookie.parse(req.headers.cookie);
-    console.log(cookies)
+    console.log(Object.entries(cookies);
     if (!cookies.SStoken) {
         return "No Session token found";
     }
@@ -123,5 +123,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   fileData = await getHTML(reqUrl);
   res.end(fileData);
 }  
+
 
 
