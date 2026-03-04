@@ -115,11 +115,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.end(error);
     return;
   }
+  console.warn("Hello")
   // set content type
   contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
   // read the HTML file
   fileData = await getHTML(reqUrl);
   res.end(fileData);
 }  
+
 
 
