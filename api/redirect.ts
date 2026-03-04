@@ -109,7 +109,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { reqMethod, reqUrl, error } = checkRequest(req);
 
   if (error || !reqMethod || !reqUrl) {
-    console.log(error);
+    console.error(error);
     res.statusCode = 400;
     res.setHeader('Content-Type', 'text/plain');
     res.end(error);
@@ -122,6 +122,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   fileData = await getHTML(reqUrl);
   res.end(fileData);
 }  
+
 
 
 
