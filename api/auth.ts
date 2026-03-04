@@ -7,7 +7,7 @@ import { api } from "../convex/_generated/api.js";
 import { randomBytes } from "crypto";
 
 
-
+const getAllGoogleIds = api.userLogin.getGoogleIDs;
 const CONVEX_URL = process.env.CONVEX_URL as string
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -90,7 +90,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const name = payload.name as string;
       const tokenExpiryDate = Date.now() + 2592000;
 
-     const allGoogleIDs : number[] = await convexClient.query(api.userLogin.getGoogleIDs); // array of numbers
+      const allGoogleIDs : number[] = await convexClient.query(getAllGoogleIds); // array of numbers
       for (let i = 0; i < allGoogleIDs.length; i++) {
         console.log(allGoogleIDs[i])
       }
