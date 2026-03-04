@@ -90,7 +90,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const name = payload.name as string;
       const tokenExpiryDate = Date.now() + 2592000;
 
-      const allGoogleIDs = await convexClient.query(api.userLogin.getGoogleIDs); // array of numbers
+     const allGoogleIDs : number[] = await convexClient.query(api.userLogin.getGoogleIDs); // array of numbers
       for (let i = 0; i < allGoogleIDs.length; i++) {
         console.log(allGoogleIDs[i])
       }
