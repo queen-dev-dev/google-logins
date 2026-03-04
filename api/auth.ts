@@ -4,7 +4,6 @@ import * as cookie from 'cookie';
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
-import { Map } from "typescript";
 import { randomBytes } from "crypto";
 
 
@@ -29,7 +28,7 @@ const oauth2Client = new OAuth2Client(
 
 const convexClient = new ConvexHttpClient(CONVEX_URL);
 
-async function createTokenCookie(token, res) { // buffer.tostring(hex)
+async function createTokenCookie(token: String, res: VercelResponse) { // buffer.tostring(hex)
   res.setHeader('Set-Cookie', `SSToken=${token})}; HttpOnly; Secure ; Path=/;SameSite = lax ; Max-Age=2592000`);
 }
 
