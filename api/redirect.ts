@@ -15,7 +15,7 @@ const checkCookies = (req: VercelRequest) => {
 
 
 // method check
-const checkRequest = (req) => {
+const checkRequest = (req: VercelRequest) => {
     let reqMethod : string | undefined;
     let reqUrl : string | undefined;
     let errors : string[] = [];
@@ -51,7 +51,7 @@ const contentTypeMiddleware = (res: VercelResponse, reqMethod: string) => {
     }
 }
 // do not call outside of file
-const _readHTMLFile = async (fileToGet) => {
+const _readHTMLFile = async (fileToGet: string) => {
     try{
         return await fs.readFile(fileToGet, "utf8");
     }
