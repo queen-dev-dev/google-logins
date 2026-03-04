@@ -28,7 +28,7 @@ const checkCookies = async (req: VercelRequest) => {
             console.log(`Found ${allGoogleIDs[i]} at position ${i}`);
             return allGoogleIDs[i];
         }
-        console.log("not here buddy")
+        console.log(`${allGoogleIDs[i]} does not match.`)
       }
 }
 
