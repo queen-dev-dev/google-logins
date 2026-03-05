@@ -28,6 +28,7 @@ const checkCookies = async (req: VercelRequest) => {
     if (!cookies.SSToken) {
         return (new Error("No Session token found"));
     }
+    console.log(typeof cookies.SStoken);
     let SSToken = fixCookie(cookies.SSToken as string);
     const allGoogleIDs: string[] = await convexClient.query(getAllTokens); // array of string
     for (let i = 0; i < allGoogleIDs.length; i++) {
@@ -132,5 +133,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     fileData = await getHTML(reqUrl);
     res.end(fileData);
 }
+
 
 
