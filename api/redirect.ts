@@ -24,12 +24,11 @@ const checkCookies = async (req: VercelRequest) => {
         return (new Error("No cookies found"));// returns object
     }
     cookies = cookie.parse(req.headers.cookie);
-    console.log(Object.entries(cookies))
+    //console.log(Object.entries(cookies))
     if (!cookies.SSToken) {
         return (new Error("No Session token found"));
     }
-    let token = cookies.SSToken as string;
-    let SSToken = fixCookie(token);
+    let SSToken = fixCookie(cookies.SSToken as string);
     const allGoogleIDs: string[] = await convexClient.query(getAllTokens); // array of string
     for (let i = 0; i < allGoogleIDs.length; i++) {
         console.log(`SSToken is ${SSToken} and type of ${typeof SSToken}`);
@@ -115,7 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    let cookies = checkCookies(req);
+    let cookies = await checkCookies(req);
     console.log(cookies);
     let fileData: string;
     const { reqMethod, reqUrl, error } = checkRequest(req);
