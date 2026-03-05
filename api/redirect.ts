@@ -86,7 +86,8 @@ const _readHTMLFile = async (fileToGet: string) => {
     try {
         return await fs.readFile(fileToGet, "utf8");
     }
-    catch {
+    catch (error) {
+        console.error(error);
         return 'ERROR FINDING FILE';
     }
 
