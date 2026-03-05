@@ -14,16 +14,16 @@ const __dirname = path.dirname(__filename); // directory name
 const checkCookies = async (req: VercelRequest) => {
     let cookies;
     if (!req.headers.cookie) {
-        return(new Error("No cookies found")) ;// returns object
+        return (new Error("No cookies found"));// returns object
     }
     cookies = cookie.parse(req.headers.cookie);
     console.log(Object.entries(cookies))
     if (!cookies.SSToken) {
-        return(new Error("No Session token found"));
+        return (new Error("No Session token found"));
     }
     let SSToken = cookies.SSToken as string;
-    const allGoogleIDs : string[] = await convexClient.query(getAllTokens); // array of numbers
-      for (let i = 0; i < allGoogleIDs.length; i++) {
+    const allGoogleIDs: string[] = await convexClient.query(getAllTokens); // array of string
+    for (let i = 0; i < allGoogleIDs.length; i++) {
         console.log(`SSToken is ${SSToken} and type of ${typeof SSToken}`);
         console.log(`Google Token is ${allGoogleIDs[i]} and type of ${typeof allGoogleIDs[i]}`);
         if (SSToken === allGoogleIDs[i]) {
@@ -31,16 +31,16 @@ const checkCookies = async (req: VercelRequest) => {
             return allGoogleIDs[i];
         }
         console.log(`${allGoogleIDs[i]} does not match.`)
-      }
+    }
 }
 
 
 
 // method check
 const checkRequest = (req: VercelRequest) => {
-    let reqMethod : string | undefined;
-    let reqUrl : string | undefined;
-    let errors : string[] = [];
+    let reqMethod: string | undefined;
+    let reqUrl: string | undefined;
+    let errors: string[] = [];
 
     if (req.method === 'GET') reqMethod = 'GET';
     else if (req.method === 'POST') reqMethod = 'POST';
@@ -52,6 +52,7 @@ const checkRequest = (req: VercelRequest) => {
     else if (req.url === '/testing') reqUrl = 'testing';
     else if (req.url === '/login') reqUrl = 'login';
     else errors.push('404 Invalid URL - are you sure this is the correct address?');
+    console.log(`requrl is ${req.url}`);
     return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null }; // returns errors joined if exist, or null otherwise
 }
 
@@ -74,10 +75,10 @@ const contentTypeMiddleware = (res: VercelResponse, reqMethod: string) => {
 }
 // do not call outside of file
 const _readHTMLFile = async (fileToGet: string) => {
-    try{
+    try {
         return await fs.readFile(fileToGet, "utf8");
     }
-    catch  {
+    catch {
         return 'ERROR FINDING FILE';
     }
 
@@ -99,32 +100,31 @@ const getHTML = async (reqUrl: string) => {
         console.log('cannot find file')
         return 'No file found'
     }
-    
+
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  let cookies = checkCookies(req);
-  console.log(cookies);
-  let fileData : string;
-  const { reqMethod, reqUrl, error } = checkRequest(req);
+    res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    let cookies = checkCookies(req);
+    console.log(cookies);
+    let fileData: string;
+    const { reqMethod, reqUrl, error } = checkRequest(req);
 
-  if (error || !reqMethod || !reqUrl) {
-    console.log(error);
-    res.statusCode = 400;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end(error);
-    return;
-  }
-  // set content type
-  console.warn("Hello")
-  contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
-  // read the HTML file
-  fileData = await getHTML(reqUrl);
-  res.end(fileData);
-}  
-
+    if (error || !reqMethod || !reqUrl) {
+        console.log(error);
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'text/plain');
+        res.end(error);
+        return;
+    }
+    // set content type
+    console.warn("Hello")
+    contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
+    // read the HTML file
+    fileData = await getHTML(reqUrl);
+    res.end(fileData);
+}
 
 
