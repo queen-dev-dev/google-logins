@@ -1,3 +1,6 @@
+// index.html always loads first regardless of setup on vercel (no extra /path added ).
+// adding home.html instead means that it's forced to path through this script, and can log / check cookies whenever
+
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import fs from 'fs/promises'
 import path from 'path'
@@ -11,6 +14,10 @@ const convexClient = new ConvexHttpClient(process.env.CONVEX_URL as string);
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
 
+const fixCookie = function (cookieToFix: string) {
+    return cookieToFix.replace(")}", "")
+}
+
 const checkCookies = async (req: VercelRequest) => {
     let cookies;
     if (!req.headers.cookie) {
@@ -21,7 +28,8 @@ const checkCookies = async (req: VercelRequest) => {
     if (!cookies.SSToken) {
         return (new Error("No Session token found"));
     }
-    let SSToken = cookies.SSToken as string;
+    let token = cookies.SSToken as string;
+    let SSToken = fixCookie(token);
     const allGoogleIDs: string[] = await convexClient.query(getAllTokens); // array of string
     for (let i = 0; i < allGoogleIDs.length; i++) {
         console.log(`SSToken is ${SSToken} and type of ${typeof SSToken}`);
@@ -88,7 +96,7 @@ const _readHTMLFile = async (fileToGet: string) => {
 // swap to switch case when using an array instead of single lines
 const getHTML = async (reqUrl: string) => {
     if (reqUrl === 'index') {
-        return await _readHTMLFile(path.join(__dirname, '/../public/home.html'));
+        return await _readHTMLFile(path.join(__dirname, '/../public/index.html'));
     }
     else if (reqUrl === 'testing') {
         return await _readHTMLFile(path.join(__dirname, '/../public/testing.html'));
@@ -120,13 +128,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return;
     }
     // set content type
-    console.warn("Hello")
     contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
     // read the HTML file
     fileData = await getHTML(reqUrl);
     res.end(fileData);
 }
-
-
 
 
