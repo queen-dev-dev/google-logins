@@ -88,7 +88,7 @@ const _readHTMLFile = async (fileToGet: string) => {
 // swap to switch case when using an array instead of single lines
 const getHTML = async (reqUrl: string) => {
     if (reqUrl === 'index') {
-        return await _readHTMLFile(path.join(__dirname, '/../public/index.html'));
+        return await _readHTMLFile(path.join(__dirname, '/../public/home.html'));
     }
     else if (reqUrl === 'testing') {
         return await _readHTMLFile(path.join(__dirname, '/../public/testing.html'));
@@ -126,6 +126,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     fileData = await getHTML(reqUrl);
     res.end(fileData);
 }
+
 
 
 
