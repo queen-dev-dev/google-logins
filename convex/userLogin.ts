@@ -48,15 +48,7 @@ export const getSSToken = query({ // gives an array of strings containing all se
     }
 })
 
-export const getDetails = query({ // WIP, should return all data related to a user. Requires ID of that user (automated by convex)
-    args: {
-        userID: v.id("BG_TESTING")
-    },
-    handler: async (ctx, args) => {
-        return await ctx.db.get("BG_TESTING", args.userID);
-    }
-})
-export const getTable = query({
+export const getDetails = query({ // returns object of user and their properties - search based off ssToken (in cookie)
     args: {
         ssToken: v.string()
     },
@@ -69,4 +61,3 @@ export const getTable = query({
         return valuse;
     }
 })
-
