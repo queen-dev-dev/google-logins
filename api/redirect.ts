@@ -34,7 +34,7 @@ const checkCookies = async (req: VercelRequest) => {
             throw new Error("Cannot find user in DB");
         }
         console.log("user is verified");
-        return
+        return userObj
     } catch (error) {
         console.error(`Silly error message (bad cookie): ${error}`);
         return (error);
@@ -44,9 +44,11 @@ const checkCookies = async (req: VercelRequest) => {
 const cookieMiddleware = async (req: VercelRequest, res: VercelResponse) => {
     console.log(`hello from inside cookie middleware`)
     const cookie = await checkCookies(req);
-    if (cookie instanceof Error) {
-        console.log(cookie.message);
-        console.log(cookie.message === "No Session token found")
+    if (cookie instanceof Error && cookie.message === "No Session token found") {
+        console.log("Back to login!")
+    }
+    if (!(cookie instanceof Error)) {
+        console.log(cookie)
     }
 }
 
