@@ -12,6 +12,11 @@ export const addUser = mutation({ // should make sure that the user doesn't exis
         tokenExpiryDate: v.number()
     },
     handler: async (ctx, args) => {
+        const fullList = ctx.db.query("BG_TESTING").collect();
+        const googleIDs = (await fullList).map((user) => user.googleID); // checks google IDs earlier, to avoid double adds.
+        for (let i = 0; i < googleIDs.length; i++) {
+            if (googleIDs[i] === args.googleID) return;
+        }
         await ctx.db.insert("BG_TESTING", {
             googleID: args.googleID,
             email: args.email,
@@ -30,7 +35,9 @@ export const _readFull = query({ // all of it. testing only
 
 })
 
-export const getGoogleIDs = query({ // gives an array of numbers containing all google ids (from every user)
+// _getGoogleIDs and _getSSToken shouldn't be necessary, but kept just in case
+
+export const _getGoogleIDs = query({ // gives an array of numbers containing all google ids (from every user)
     args: {},
     handler: async (ctx) => {
         const fullList = ctx.db.query("BG_TESTING").collect();
@@ -39,7 +46,7 @@ export const getGoogleIDs = query({ // gives an array of numbers containing all 
     }
 })
 
-export const getSSToken = query({ // gives an array of strings containing all session / cookie tokens
+export const _getSSToken = query({ // gives an array of strings containing all session / cookie tokens
     args: {},
     handler: async (ctx) => {
         const fullList = ctx.db.query("BG_TESTING").collect();
