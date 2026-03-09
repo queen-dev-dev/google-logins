@@ -1,117 +1,142 @@
-import { OAuth2Client } from "google-auth-library";
-import crypto from "crypto"
-import * as cookie from 'cookie';
+// index.html always loads first regardless of setup on vercel (no extra /path added ).
+// adding home.html instead means that it's forced to path through this script, and can log / check cookies whenever
+
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import fs from 'fs/promises'
+import path from 'path'
+import url from 'url'
+import * as cookie from 'cookie'
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
-import { randomBytes } from "crypto";
 
+const getAllTokens = api.userLogin._getSSToken;
+const convexClient = new ConvexHttpClient(process.env.CONVEX_URL as string);
+const __filename = url.fileURLToPath(import.meta.url); // file name
+const __dirname = path.dirname(__filename); // directory name
 
-const getAllGoogleIds = api.userLogin._getGoogleIDs;
-const CONVEX_URL = process.env.CONVEX_URL as string
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI
-  ? `https://${process.env.REDIRECT_URI}/api/auth?action=callback`
-  : "http://localhost:3000/api/auth?action=callback"
-  ;
-
-if (!CLIENT_ID || !CLIENT_SECRET) {
-  throw new Error("Missing Google OAuth env vars")
+/*const fixCookie = function (cookieToFix: string) {
+    return cookieToFix.replace(")}", "")
 }
 
-const oauth2Client = new OAuth2Client(
-  CLIENT_ID,
-  CLIENT_SECRET,
-  REDIRECT_URI
-);
-
-const convexClient = new ConvexHttpClient(CONVEX_URL);
-
-async function createTokenCookie(token: String, res: VercelResponse) { // buffer.tostring(hex)
-  res.setHeader('Set-Cookie', `SSToken=${token})}; HttpOnly; Secure ; Path=/;SameSite = lax ; Max-Age=2592000`);
+const checkCookies = async (req: VercelRequest) => {
+    let cookies;
+    if (!req.headers.cookie) {
+        return (new Error("No cookies found"));// returns object
+    }
+    cookies = cookie.parseCookie(req.headers.cookie);
+    //console.log(Object.entries(cookies))
+    if (!cookies.SSToken) {
+        return (new Error("No Session token found"));
+    }
+    console.log(cookies);
+    console.log(cookies.SSToken);
+    let SSToken = fixCookie(cookies.SSToken as string);
+    const allGoogleIDs: string[] = await convexClient.query(getAllTokens); // array of string
+    for (let i = 0; i < allGoogleIDs.length; i++) {
+        console.log(`SSToken is ${SSToken} and type of ${typeof SSToken}`);
+        console.log(`Google Token is ${allGoogleIDs[i]} and type of ${typeof allGoogleIDs[i]}`);
+        if (SSToken === allGoogleIDs[i]) {
+            let cookie = {
+                name: "123",
+                age: "2"
+            }
+            console.log(`Found ${allGoogleIDs[i]} at position ${i}`);
+            return allGoogleIDs[i];
+        }
+        console.log(`${allGoogleIDs[i]} does not match.`)
+    }
 }
 
+*/
 
+// method check
+const checkRequest = (req: VercelRequest) => {
+    let reqMethod: string | undefined;
+    let reqUrl: string | undefined;
+    let errors: string[] = [];
+
+    if (req.method === 'GET') reqMethod = 'GET';
+    else if (req.method === 'POST') reqMethod = 'POST';
+    else if (req.method === 'OPTIONS') reqMethod = 'OPTIONS';
+    else errors.push('Invalid Method - use GET, POST or OPTIONS');
+
+    // url check
+    if (req.url === '/') reqUrl = 'index';
+    else if (req.url === '/testing') reqUrl = 'testing';
+    else if (req.url === '/login') reqUrl = 'login';
+    else errors.push('404 Invalid URL - are you sure this is the correct address?');
+    console.log(`requrl is ${req.url}`);
+    return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null }; // returns errors joined if exist, or null otherwise
+}
+
+// content type check
+const contentTypeMiddleware = (res: VercelResponse, reqMethod: string) => {
+    if (reqMethod === 'GET') {
+        res.statusCode = 200
+        res.setHeader('Content-Type', 'text/html')
+    }
+    else if (reqMethod === 'POST' || reqMethod === 'OPTIONS') {
+        console.log(`Unsupported method ${reqMethod} used.`);
+        res.statusCode = 403;
+        res.setHeader('Content-Type', 'text/plain'); // sets header without sending
+    }
+    else {
+        console.log('Error finding details');
+        res.statusCode = 404;
+        res.setHeader('Content-Type', 'text/plain');
+    }
+}
+// do not call outside of file
+const _readHTMLFile = async (fileToGet: string) => {
+    try {
+        return await fs.readFile(fileToGet, "utf8");
+    }
+    catch (error) {
+        return 'ERROR FINDING FILE';
+    }
+
+}
+
+// gets specific html file
+// swap to switch case when using an array instead of single lines
+const getHTML = async (reqUrl: string) => {
+    if (reqUrl === 'index') {
+        return await _readHTMLFile(path.join(__dirname, '/../public/home.html'));
+    }
+    else if (reqUrl === 'testing') {
+        return await _readHTMLFile(path.join(__dirname, '/../public/testing.html'));
+    }
+    else if (reqUrl === 'login') {
+        return await _readHTMLFile(path.join(__dirname, '/../public/login.html'));
+    }
+    else {
+        console.log('cannot find file')
+        return 'No file found'
+    }
+
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const { action } = req.query;
+    res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    //let cookies = await checkCookies(req);
+    //console.log(cookies);
+    let fileData: string;
+    const { reqMethod, reqUrl, error } = checkRequest(req);
 
-  //  Start Google login
-  if (action === "login") {
-    const state = crypto.randomUUID();
-    const authUrl = oauth2Client.generateAuthUrl({
-      scope: ["openid", "email", "profile"],
-      prompt: "select_account",
-      state,
-    });
-
-    res.setHeader(
-      "Set-Cookie",
-      `oauth_state=${state}; HttpOnly; Path=/; SameSite=Lax`
-    )
-    res.redirect(302, authUrl);
-    return;
-  }
-
-  //  Google callback
-  if (action === "callback") {
-    const code = req.query.code as string;
-    const returnedState = req.query.state as string;
-    const cookies = cookie.parse(req.headers.cookie as string ?? "");
-    const storedState = cookies.oauth_state;
-
-    if (!code) {
-      res.status(400).send("Missing auth code")
-      return;
+    if (error || !reqMethod || !reqUrl) {
+        console.log(error);
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'text/plain');
+        res.end(error);
+        return;
     }
+    // set content type
+    contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
+    // read the HTML file
+    fileData = await getHTML(reqUrl);
+    res.end(fileData);
+}
 
-    if (!returnedState || returnedState !== storedState) {
-      res.status(403).send("Invalid OAuth state")
-      return;
-    }
-    try {
-      const { tokens } = await oauth2Client.getToken(code);
-      oauth2Client.setCredentials(tokens);
 
-      if (!tokens.id_token) throw new Error("NO ID token returned from Google")
-
-      const ticket = await oauth2Client.verifyIdToken({
-        idToken: tokens.id_token,
-        audience: CLIENT_ID,
-      });
-
-      const payload = ticket.getPayload();
-      if (!payload) throw new Error("No token payload")
-
-      const SSToken = randomBytes(32).toString('hex');
-      const googleUserId = payload.sub;
-      const email = payload.email as string;
-      const name = payload.name as string;
-      const tokenExpiryDate = Date.now() + 2592000000; // adds on a month in ms
-      await convexClient.mutation(api.userLogin.addUser, {
-        googleID: googleUserId,
-        email: email,
-        name: name,
-        ssToken: SSToken,
-        tokenExpiryDate: tokenExpiryDate
-      })
-      console.log("Stored in convex DB");
-      createTokenCookie(SSToken, res);
-      res.status(200).json({
-        googleUserId,
-        email,
-        name,
-        SSToken,
-        tokenExpiryDate
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Authentication failed");
-    }
-    return;
-  }
-
-  // 404
-  res.status(404).send("Not found");
-};
