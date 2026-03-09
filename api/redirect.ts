@@ -129,7 +129,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.end(error);
         return;
     }
-    cookieMiddleware(req, res)
+    cookieMiddleware(req, res);
+    console.log(`hello from under cookie middleware`)
     // set content type
     contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
     // read the HTML file
