@@ -8,6 +8,8 @@ import url from 'url'
 import * as cookie from 'cookie'
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
+import { StsCredentials } from 'google-auth-library/build/src/auth/stscredentials.js'
+import { error } from 'console'
 
 const getAllTokens = api.userLogin._getSSToken;
 const convexClient = new ConvexHttpClient(process.env.CONVEX_URL as string);
@@ -30,22 +32,14 @@ const checkCookies = async (req: VercelRequest) => {
     console.log(cookies);
     console.log(cookies.SSToken);
     try{
-    let SSToken = fixCookie(cookies.SSToken as string);
-    const allGoogleIDs: string[] = await convexClient.query(getAllTokens); // array of string
-    for (let i = 0; i < allGoogleIDs.length; i++) {
-        console.log(`SSToken is ${SSToken} and type of ${typeof SSToken}`);
-        console.log(`Google Token is ${allGoogleIDs[i]} and type of ${typeof allGoogleIDs[i]}`);
-        if (SSToken === allGoogleIDs[i]) {
-            let cookie = {
-                name: "123",
-                age: "2"
-            }
-            console.log(`Found ${allGoogleIDs[i]} at position ${i}`);
-            return allGoogleIDs[i];
+        let SSToken = fixCookie(cookies.SSToken as string);
+        const userObj = await convexClient.query(api.userLogin.getDetails, {ssToken: SSToken})
+        if (!userObj || userObj === null) {
+            return (new Error("Cannot find user in DB"));
         }
-        console.log(`${allGoogleIDs[i]} does not match.`)
-    }}
-    catch(error) {
+        console.log("user is verified");
+        return
+    } catch(error) {
         console.error(error);
         return(error);
     }
@@ -124,8 +118,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    //let cookies = await checkCookies(req);
-    //console.log(cookies);
+    let cookies = await checkCookies(req);
+    if (cookies === typeof Error) console.log(cookies);
     let fileData: string;
     const { reqMethod, reqUrl, error } = checkRequest(req);
 
