@@ -47,6 +47,7 @@ const  cookieMiddleware = async (req:VercelRequest, res:VercelResponse) => {
     if (cookie instanceof Error) {
         console.log(Object.entries(cookie));
         console.log(cookie);
+        console.log(cookie === new Error("No Session token found"))
     }
 }
 
