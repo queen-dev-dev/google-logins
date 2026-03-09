@@ -117,7 +117,9 @@ const getHTML = async (reqUrl: string) => {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    console.warn(await convexClient.query(api.userLogin.getTable, {ssToken:"e37fdeb2242d058d90a5bd6bd735d4624e9bdf394ca00b46d52f2a2450279569"}))
+    let myObj = await convexClient.query(api.userLogin.getTable, {ssToken:"e37fdeb2242d058d90a5bd6bd735d4624e9bdf394ca00b46d52f2a2450279569"})
+    console.warn(myObj)
+    console.warn(typeof myObj)
     res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
