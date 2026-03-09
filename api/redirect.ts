@@ -43,9 +43,10 @@ const checkCookies = async (req: VercelRequest) => {
 
 const  cookieMiddleware = async (req:VercelRequest, res:VercelResponse) => {
     console.log(`hello from inside cookie middleware`)
-    const cookie = await checkCookies(req)
+    const cookie = await checkCookies(req);
     if (cookie instanceof Error) {
-        console.log(Object.entries(cookie))
+        console.log(Object.entries(cookie));
+        console.log(cookie);
     }
 }
 
