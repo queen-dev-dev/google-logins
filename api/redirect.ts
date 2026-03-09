@@ -14,7 +14,7 @@ const convexClient = new ConvexHttpClient(process.env.CONVEX_URL as string);
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
 
-/*const fixCookie = function (cookieToFix: string) {
+const fixCookie = function (cookieToFix: string) {
     return cookieToFix.replace(")}", "")
 }
 
@@ -24,12 +24,12 @@ const checkCookies = async (req: VercelRequest) => {
         return (new Error("No cookies found"));// returns object
     }
     cookies = cookie.parseCookie(req.headers.cookie);
-    //console.log(Object.entries(cookies))
     if (!cookies.SSToken) {
         return (new Error("No Session token found"));
     }
     console.log(cookies);
     console.log(cookies.SSToken);
+    try{
     let SSToken = fixCookie(cookies.SSToken as string);
     const allGoogleIDs: string[] = await convexClient.query(getAllTokens); // array of string
     for (let i = 0; i < allGoogleIDs.length; i++) {
@@ -44,10 +44,14 @@ const checkCookies = async (req: VercelRequest) => {
             return allGoogleIDs[i];
         }
         console.log(`${allGoogleIDs[i]} does not match.`)
+    }}
+    catch(error) {
+        console.error(error);
+        return(error);
     }
 }
 
-*/
+
 
 // method check
 const checkRequest = (req: VercelRequest) => {
