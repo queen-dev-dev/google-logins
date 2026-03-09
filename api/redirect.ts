@@ -41,9 +41,9 @@ const checkCookies = async (req: VercelRequest) => {
     }
 }
 
-const cookieMiddleware = (req:VercelRequest, res:VercelResponse) => {
+const  cookieMiddleware = async (req:VercelRequest, res:VercelResponse) => {
     console.log(`hello from inside cookie middleware`)
-    const cookie = checkCookies(req)
+    const cookie = await checkCookies(req)
     if (cookie instanceof Error) {
         console.error("Error o clock")
     }
@@ -130,7 +130,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.end(error);
         return;
     }
-    cookieMiddleware(req, res);
+    await cookieMiddleware(req, res);
     // set content type
     contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
     // read the HTML file
