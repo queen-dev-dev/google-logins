@@ -19,29 +19,29 @@ const fixCookie = function (cookieToFix: string) {
 }
 
 const checkCookies = async (req: VercelRequest) => {
-    let cookies;
-    if (!req.headers.cookie) {
-        throw new Error("No cookies found");// returns object
-    }
-    cookies = cookie.parseCookie(req.headers.cookie);
-    if (!cookies.SSToken) {
-        throw new Error("No Session token found");
-    }
-    try{
+    try {
+        let cookies;
+        if (!req.headers.cookie) {
+            throw new Error("No cookies found");// returns object
+        }
+        cookies = cookie.parseCookie(req.headers.cookie);
+        if (!cookies.SSToken) {
+            throw new Error("No Session token found");
+        }
         let SSToken = fixCookie(cookies.SSToken as string);
-        const userObj = await convexClient.query(api.userLogin.getDetails, {ssToken: SSToken})
+        const userObj = await convexClient.query(api.userLogin.getDetails, { ssToken: SSToken })
         if (!userObj || userObj === null) {
             throw new Error("Cannot find user in DB");
         }
         console.log("user is verified");
         return
-    } catch(error) {
-        console.error(error);
-        return(error);
+    } catch (error) {
+        console.error(`Silly error message (bad cookie): ${error}`);
+        return (error);
     }
 }
 
-const  cookieMiddleware = async (req:VercelRequest, res:VercelResponse) => {
+const cookieMiddleware = async (req: VercelRequest, res: VercelResponse) => {
     console.log(`hello from inside cookie middleware`)
     const cookie = await checkCookies(req);
     if (cookie instanceof Error) {
