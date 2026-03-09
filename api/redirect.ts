@@ -27,8 +27,6 @@ const checkCookies = async (req: VercelRequest) => {
     if (!cookies.SSToken) {
         return (new Error("No Session token found"));
     }
-    console.log(`Parsed cookies:  ${cookies}`);
-    console.log(`SSTOKEN: ${cookies.SSToken}`);
     try{
         let SSToken = fixCookie(cookies.SSToken as string);
         const userObj = await convexClient.query(api.userLogin.getDetails, {ssToken: SSToken})
