@@ -21,17 +21,17 @@ const fixCookie = function (cookieToFix: string) {
 const checkCookies = async (req: VercelRequest) => {
     let cookies;
     if (!req.headers.cookie) {
-        return (new Error("No cookies found"));// returns object
+        throw new Error("No cookies found");// returns object
     }
     cookies = cookie.parseCookie(req.headers.cookie);
     if (!cookies.SSToken) {
-        return (new Error("No Session token found"));
+        throw new Error("No Session token found");
     }
     try{
         let SSToken = fixCookie(cookies.SSToken as string);
         const userObj = await convexClient.query(api.userLogin.getDetails, {ssToken: SSToken})
         if (!userObj || userObj === null) {
-            return (new Error("Cannot find user in DB"));
+            throw new Error("Cannot find user in DB");
         }
         console.log("user is verified");
         return
@@ -46,7 +46,7 @@ const  cookieMiddleware = async (req:VercelRequest, res:VercelResponse) => {
     const cookie = await checkCookies(req);
     if (cookie instanceof Error) {
         console.log(Object.entries(cookie));
-        console.log(cookie);
+        console.log(cookie.message);
         console.log(cookie === new Error("No Session token found"))
     }
 }
