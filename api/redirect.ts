@@ -45,7 +45,7 @@ const  cookieMiddleware = async (req:VercelRequest, res:VercelResponse) => {
     console.log(`hello from inside cookie middleware`)
     const cookie = await checkCookies(req)
     if (cookie instanceof Error) {
-        console.error("Error o clock")
+        console.log(Object.entries(cookie))
     }
 }
 
