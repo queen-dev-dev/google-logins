@@ -27,8 +27,8 @@ const checkCookies = async (req: VercelRequest) => {
     if (!cookies.SSToken) {
         return (new Error("No Session token found"));
     }
-    console.log(cookies);
-    console.log(cookies.SSToken);
+    console.log(`Parsed cookies:  ${cookies}`);
+    console.log(`SSTOKEN: ${cookies.SSToken}`);
     try{
         let SSToken = fixCookie(cookies.SSToken as string);
         const userObj = await convexClient.query(api.userLogin.getDetails, {ssToken: SSToken})
@@ -46,7 +46,7 @@ const checkCookies = async (req: VercelRequest) => {
 const cookieMiddleware = (req:VercelRequest, res:VercelResponse) => {
     const cookie = checkCookies(req)
     if (cookie instanceof Error) {
-        console.log("Error o clock")
+        console.error("Error o clock")
     }
 }
 
@@ -121,8 +121,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    let cookies = await checkCookies(req);
-    if (cookies === typeof Error) console.log(cookies);
     let fileData: string;
     const { reqMethod, reqUrl, error } = checkRequest(req);
 
