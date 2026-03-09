@@ -55,7 +55,7 @@ export const _getSSToken = query({ // gives an array of strings containing all s
     }
 })
 
-export const getDetails = query({ // returns object of user and their properties - search based off ssToken (in cookie)
+export const getDetails = query({ // returns array of user and their properties - search based off ssToken (in cookie)
     args: {
         ssToken: v.string()
     },
@@ -64,7 +64,7 @@ export const getDetails = query({ // returns object of user and their properties
         .query("BG_TESTING")
         .withIndex("by_ssToken", q => 
             q.eq("ssToken", args.ssToken))
-        .collect()
+        .unique()
         return valuse;
     }
 })
