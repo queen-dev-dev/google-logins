@@ -8,10 +8,8 @@ import url from 'url'
 import * as cookie from 'cookie'
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
-import { StsCredentials } from 'google-auth-library/build/src/auth/stscredentials.js'
 import { error } from 'console'
 
-const getAllTokens = api.userLogin._getSSToken;
 const convexClient = new ConvexHttpClient(process.env.CONVEX_URL as string);
 const __filename = url.fileURLToPath(import.meta.url); // file name
 const __dirname = path.dirname(__filename); // directory name
@@ -45,7 +43,12 @@ const checkCookies = async (req: VercelRequest) => {
     }
 }
 
-
+const cookieMiddleware = (req:VercelRequest, res:VercelResponse) => {
+    const cookie = checkCookies(req)
+    if (cookie instanceof Error) {
+        console.log("Error o clock")
+    }
+}
 
 // method check
 const checkRequest = (req: VercelRequest) => {
@@ -130,6 +133,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.end(error);
         return;
     }
+    cookieMiddleware(req, res)
     // set content type
     contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
     // read the HTML file
