@@ -50,8 +50,7 @@ const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl:
     }
     if (typeofReqUrl === "protected" && cookie instanceof Error && cookie.message === "Cannot find user in DB") {
         res.setHeader('Content-Type', 'text/plain');
-        res.end("Not a valid cookie.")
-        break;
+        res.end("Not a valid cookie.");
     }
     if (!(cookie instanceof Error)) {
         console.log(cookie);
@@ -144,11 +143,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     // set content type
     contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
-    const newReqUrl = await cookieMiddleware(req, res, reqUrl, reqType);
+    await cookieMiddleware(req, res, reqUrl, reqType);
     // read the HTML file
-    await getHTML(newReqUrl);
-    fileData = await getHTML(reqUrl);
-    res.end(fileData);
+    try {
+        fileData = await getHTML(reqUrl);
+        res.end(fileData);
+    }
+    catch (error) {
+        console.warn(error);
+    }
 }
 
 
