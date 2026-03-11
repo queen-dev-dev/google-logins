@@ -1,26 +1,25 @@
 <!DOCTYPE HTML>
 <html>
-  <head>
-    <script>
-      fetch("https://google-logins.vercel.app/api/hello?name=Devon")
-        .then(res => res.json())
-        .then((data) => {
-          let NAME = data.message
-          this.document.getElementById("replaceMe").innerHTML = `Welcome ${NAME}!`
-        });
-    </script>
-    <title> Main </title>
-  </head>
-  <body>
-    <h1>
-      Hello!
-    </h1>
-    <p id="replaceMe">
-      Welcome!
-    </p>
-  </body>
+
+<head>
+  <script>
+    fetch("https://google-logins.vercel.app/api/hello?name=Devon")
+      .then(res => res.json())
+      .then((data) => {
+        let NAME = data.message
+        this.document.getElementById("replaceMe").innerHTML = `Welcome ${NAME}!`
+      });
+  </script>
+  <title> Main </title>
+</head>
+
+<body>
+  <h1>
+    Hello!
+  </h1>
+  <p id="replaceMe">
+    Welcome!
+  </p>
+</body>
+
 </html>
-
-
-
-
