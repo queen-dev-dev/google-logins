@@ -44,7 +44,7 @@ const checkCookies = async (req: VercelRequest) => {
 const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl: string) => {
     console.log(`hello from inside cookie middleware`)
     const cookie = await checkCookies(req);
-    if (reqUrl != "login" && cookie instanceof Error && cookie.message === "No Session token found") {
+    if (reqUrl != "login" && cookie instanceof Error && cookie.message === ("No Session token found" || "No cookies found")) {
         reqUrl = "login";
         console.log("Back to login!")
     }
