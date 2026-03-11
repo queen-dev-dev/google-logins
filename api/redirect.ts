@@ -30,6 +30,7 @@ const checkCookies = async (req: VercelRequest) => {
         }
         let SSToken = fixCookie(cookies.SSToken as string);
         const userObj = await convexClient.query(api.userLogin.getDetails, { ssToken: SSToken })
+        console.log(userObj);
         if (!userObj || userObj === null) {
             throw new Error("Cannot find user in DB");
         }
