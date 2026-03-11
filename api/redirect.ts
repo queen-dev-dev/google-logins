@@ -56,9 +56,10 @@ const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl:
 }
 
 // method check
-const checkRequest = (req: VercelRequest, reqType: string) => {
-    let reqMethod: string | undefined;
-    let reqUrl: string | undefined;
+const checkRequest = (req: VercelRequest) => {
+    let reqType: string;
+    let reqMethod: string;
+    let reqUrl: string;
     let errors: string[] = [];
 
     if (req.method === 'GET') reqMethod = 'GET';
@@ -72,6 +73,7 @@ const checkRequest = (req: VercelRequest, reqType: string) => {
     else if (req.url === '/login') reqUrl = 'login';
     else errors.push('404 Invalid URL - are you sure this is the correct address?');
     if (reqUrl === "testing") reqType = "protected";
+    else reqType = "safe";
     console.log(`requrl is ${req.url}`);
     return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null, reqType }; // returns errors joined if exist, or null otherwise
 }
@@ -124,12 +126,11 @@ const getHTML = async (reqUrl: string) => {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    let typeofReqUrl = "safe"; // either safe or protected
     res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     let fileData: string;
-    const { reqMethod, reqUrl, error, typeofReqUrl } = checkRequest(req, typeofReqUrl);
+    const { reqMethod, reqUrl, error, reqType } = checkRequest(req, typeofReqUrl);
 
     if (error || !reqMethod || !reqUrl) {
         console.log(error);
@@ -140,7 +141,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     // set content type
     contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
-    const newReqUrl = await cookieMiddleware(req, res, reqUrl, typeofReqUrl);
+    const newReqUrl = await cookieMiddleware(req, res, reqUrl, reqType);
     // read the HTML file
     if (newReqUrl != undefined) fileData = await getHTML(newReqUrl);
     else fileData = await getHTML(reqUrl);
