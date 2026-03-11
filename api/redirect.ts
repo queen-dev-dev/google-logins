@@ -131,7 +131,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     let fileData: string;
     const { reqMethod, reqUrl, error, reqType } = checkRequest(req);
-
+    console.log(reqType)
     if (error || !reqMethod || !reqUrl) {
         console.log(error);
         res.statusCode = 400;
