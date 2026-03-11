@@ -45,7 +45,7 @@ const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl:
     console.log(`hello from inside cookie middleware`)
     const cookie = await checkCookies(req);
     if (reqUrl != "login" && cookie instanceof Error && cookie.message === "No Session token found") {
-        res.redirect(304, "https://google-logins.vercel.app/testing")
+        reqUrl = "login";
         console.log("Back to login!")
     }
     if (!(cookie instanceof Error)) {
