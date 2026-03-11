@@ -138,6 +138,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
     await cookieMiddleware(req, res, reqUrl);
     // read the HTML file
+    console.log(reqUrl);
     fileData = await getHTML(reqUrl);
     res.end(fileData);
 }
