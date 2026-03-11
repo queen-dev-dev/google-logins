@@ -44,12 +44,14 @@ const checkCookies = async (req: VercelRequest) => {
 const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl: string) => {
     console.log(`hello from inside cookie middleware`)
     const cookie = await checkCookies(req);
-    if (reqUrl != "login" && cookie instanceof Error && cookie.message === ("No Session token found" || "No cookies found")) {
+    if (reqUrl != "login" && cookie instanceof Error && cookie.message === "No Session token found" || cookie.message === "No cookies found") {
         reqUrl = "login";
-        console.log("Back to login!")
+        console.log("Back to login!");
+        return reqUrl
     }
     if (!(cookie instanceof Error)) {
-        console.log(cookie)
+        console.log(cookie);
+        return undefined;
     }
 }
 
@@ -136,10 +138,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     // set content type
     contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
-    await cookieMiddleware(req, res, reqUrl);
+    const newReqUrl = await cookieMiddleware(req, res, reqUrl);
     // read the HTML file
-    console.log(reqUrl);
-    fileData = await getHTML(reqUrl);
+    if (newReqUrl != undefined) fileData = await getHTML(newReqUrl);
+    else fileData = await getHTML(reqUrl);
     res.end(fileData);
 }
 
