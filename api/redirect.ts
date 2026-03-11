@@ -73,7 +73,7 @@ const checkRequest = (req: VercelRequest, reqType: string) => {
     else errors.push('404 Invalid URL - are you sure this is the correct address?');
     if (reqUrl === "testing") reqType = "protected";
     console.log(`requrl is ${req.url}`);
-    return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null }; // returns errors joined if exist, or null otherwise
+    return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null, reqType }; // returns errors joined if exist, or null otherwise
 }
 
 // content type check
@@ -129,7 +129,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     let fileData: string;
-    const { reqMethod, reqUrl, error } = checkRequest(req, typeofReqUrl);
+    const { reqMethod, reqUrl, error, typeofReqUrl } = checkRequest(req, typeofReqUrl);
 
     if (error || !reqMethod || !reqUrl) {
         console.log(error);
