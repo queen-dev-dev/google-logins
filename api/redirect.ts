@@ -41,10 +41,10 @@ const checkCookies = async (req: VercelRequest) => {
     }
 }
 
-const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl: string) => {
-    console.log(`hello from inside cookie middleware`)
+const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl: string, typeofReqUrl: string) => {
+    console.log(`hello from inside cookie middleware`) // redirect works, but currently always redirects to login
     const cookie = await checkCookies(req);
-    if (reqUrl != "login" && cookie instanceof Error && cookie.message === "No Session token found" || cookie.message === "No cookies found") {
+    if (reqUrl != "login" && typeofReqUrl === "protected" && cookie instanceof Error && cookie.message === "No Session token found" || cookie.message === "No cookies found") {
         reqUrl = "login";
         console.log("Back to login!");
         return reqUrl
@@ -56,7 +56,7 @@ const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl:
 }
 
 // method check
-const checkRequest = (req: VercelRequest) => {
+const checkRequest = (req: VercelRequest, reqType: string) => {
     let reqMethod: string | undefined;
     let reqUrl: string | undefined;
     let errors: string[] = [];
@@ -71,6 +71,7 @@ const checkRequest = (req: VercelRequest) => {
     else if (req.url === '/testing') reqUrl = 'testing';
     else if (req.url === '/login') reqUrl = 'login';
     else errors.push('404 Invalid URL - are you sure this is the correct address?');
+    if (reqUrl === "testing") reqType = "protected";
     console.log(`requrl is ${req.url}`);
     return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null }; // returns errors joined if exist, or null otherwise
 }
@@ -123,11 +124,12 @@ const getHTML = async (reqUrl: string) => {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    let typeofReqUrl = "safe"; // either safe or protected
     res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     let fileData: string;
-    const { reqMethod, reqUrl, error } = checkRequest(req);
+    const { reqMethod, reqUrl, error } = checkRequest(req, typeofReqUrl);
 
     if (error || !reqMethod || !reqUrl) {
         console.log(error);
@@ -138,7 +140,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     // set content type
     contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
-    const newReqUrl = await cookieMiddleware(req, res, reqUrl);
+    const newReqUrl = await cookieMiddleware(req, res, reqUrl, typeofReqUrl);
     // read the HTML file
     if (newReqUrl != undefined) fileData = await getHTML(newReqUrl);
     else fileData = await getHTML(reqUrl);
