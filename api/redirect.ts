@@ -44,7 +44,7 @@ const checkCookies = async (req: VercelRequest) => {
 const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl: string, typeofReqUrl: string) => {
     console.log(`hello from inside cookie middleware`) // redirect works, but currently always redirects to login
     const cookie = await checkCookies(req);
-    if (reqUrl != "login" && typeofReqUrl === "protected" && cookie instanceof Error && cookie.message === "No Session token found" || cookie.message === "No cookies found") {
+    if (reqUrl != "login" && typeofReqUrl === "protected" && cookie instanceof Error && (cookie.message === "No Session token found" || cookie.message === "No cookies found")) {
         reqUrl = "login";
         console.log("Back to login!");
         return reqUrl
