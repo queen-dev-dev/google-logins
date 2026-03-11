@@ -45,13 +45,11 @@ const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl:
     console.log(`hello from inside cookie middleware`) // redirect works, but currently always redirects to login
     const cookie = await checkCookies(req);
     if (reqUrl != "login" && typeofReqUrl === "protected" && cookie instanceof Error && (cookie.message === "No Session token found" || cookie.message === "No cookies found")) {
-        reqUrl = "login";
+        res.redirect("https://google-logins.vercel.app/login")
         console.log("Back to login!");
-        return reqUrl
     }
     if (!(cookie instanceof Error)) {
         console.log(cookie);
-        return undefined;
     }
 }
 
@@ -143,8 +141,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     contentTypeMiddleware(res, reqMethod); // stops it from checking if null (it isn't)
     const newReqUrl = await cookieMiddleware(req, res, reqUrl, reqType);
     // read the HTML file
-    if (newReqUrl != undefined) fileData = await getHTML(newReqUrl);
-    else fileData = await getHTML(reqUrl);
+    await getHTML(newReqUrl);
+    fileData = await getHTML(reqUrl);
     res.end(fileData);
 }
 
