@@ -31,7 +31,7 @@ const checkCookies = async (req: VercelRequest) => {
         let SSToken = fixCookie(cookies.SSToken as string);
         console.log("before userObj")
         const userObj = await convexClient.query(api.userLogin.getDetails, { ssToken: SSToken })
-        console.log(`i hate cookies`)
+        console.log(userObj) // new user object will not appear on a new login unless you remove data from DB (not allowed to have doubles)
         if (!userObj || userObj === null) {
             throw new Error("Cannot find user in DB");
         }
