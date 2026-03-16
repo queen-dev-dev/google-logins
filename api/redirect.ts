@@ -55,7 +55,7 @@ const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl:
         console.log("Back to login!");
     }
     if (typeofReqUrl === "protected" && error instanceof Error && error.message === "Cannot find user in DB") {
-        res.setHeader('Content-Type', 'text/plain');
+        res.redirect("https://google-logins.vercel.app/login")
         res.end("Not a valid cookie.");
     }
     if (userObj != undefined && error instanceof Error && error.message === "Outdated token") {

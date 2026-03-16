@@ -69,7 +69,7 @@ export const getDetails = query({ // returns object of user and their properties
     }
 })
 
-export const DeleteSSToken = mutation({ // give an ID, deletes their token, expiry date and creation time
+export const DeleteSSToken = mutation({ // give an ID, deletes their token and expiry date 
     args: {
         id: v.id("BG_TESTING"),
         email: v.string(),
