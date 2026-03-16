@@ -56,7 +56,7 @@ const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl:
     }
     if (typeofReqUrl === "protected" && error instanceof Error && error.message === "Cannot find user in DB") {
         res.redirect("https://google-logins.vercel.app/login") // TODO: Needs cookie to be deleted at some point
-        res.end("Not a valid cookie.");
+        console.log("Not a valid cookie.");
     }
     if (userObj != undefined && error instanceof Error && error.message === "Outdated token") {
         convexClient.mutation(api.userLogin.DeleteSSToken, {
