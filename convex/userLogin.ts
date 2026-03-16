@@ -59,12 +59,28 @@ export const getDetails = query({ // returns array of user and their properties 
     args: {
         ssToken: v.string()
     },
-    handler: async(ctx, args) => {
+    handler: async (ctx, args) => {
         const valuse = await ctx.db
-        .query("BG_TESTING")
-        .withIndex("by_ssToken", q => 
-            q.eq("ssToken", args.ssToken))
-        .unique()
+            .query("BG_TESTING")
+            .withIndex("by_ssToken", q =>
+                q.eq("ssToken", args.ssToken))
+            .unique()
         return valuse;
+    }
+})
+
+export const DeleteSSToken = query({ // give an ID, deletes their token, expiry date and creation time
+    args: {
+        id: v.id(),
+        email: v.string(),
+        googleID: v.string(),
+        name: v.string()
+    },
+    handler: async (ctx, args) => {
+        await ctx.db.replace("BG_TESTING", args.id, {
+            name: args.name,
+            email: args.email,
+            googleID: args.googleID
+        });
     }
 })

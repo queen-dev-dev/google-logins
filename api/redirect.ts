@@ -21,24 +21,20 @@ const fixCookie = function (cookieToFix: string) {
 const checkCookies = async (req: VercelRequest) => {
     try {
         let cookies;
-        if (!req.headers.cookie) {
-            throw new Error("No cookies found");// returns object
-        }
+        if (!req.headers.cookie) throw new Error("No cookies found");// returns object
+
         cookies = cookie.parseCookie(req.headers.cookie);
-        if (!cookies.SSToken) {
-            throw new Error("No Session token found");
-        }
+        if (!cookies.SSToken) throw new Error("No Session token found");
+
         let SSToken = fixCookie(cookies.SSToken as string);
-        console.log("before userObj")
-        const userObj = await convexClient.query(api.userLogin.getDetails, { ssToken: SSToken })
-        console.log(userObj) // new user object will not appear on a new login unless you remove data from DB (not allowed to have doubles)
-        if (!userObj || userObj === null) {
-            throw new Error("Cannot find user in DB");
-        }
+        const userObj = await convexClient.query(api.userLogin.getDetails, { ssToken: SSToken }) // new user object will not appear on a new login unless you remove data from DB (not allowed to have doubles)
+        if (!userObj || userObj === null) throw new Error("Cannot find user in DB");
+
         console.log("user is verified");
+        if (userObj.tokenExpiryDate < Date.now()) throw new Error("Outdated token");
         return userObj
     } catch (error) {
-        console.error(`Silly error message (bad cookie): ${error}`);
+        console.error(`error message (bad cookie): ${error}`);
         return (error);
     }
 }
@@ -53,6 +49,9 @@ const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl:
     if (typeofReqUrl === "protected" && cookie instanceof Error && cookie.message === "Cannot find user in DB") {
         res.setHeader('Content-Type', 'text/plain');
         res.end("Not a valid cookie.");
+    }
+    if (cookie instanceof Error && cookie.message === "Outdated token") {
+        console.log("hello")
     }
     if (!(cookie instanceof Error)) {
         console.log(cookie);
@@ -134,7 +133,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    console.log(await convexClient.query(api.userLogin._readFull));
     let fileData: string;
     const { reqMethod, reqUrl, error, reqType } = checkRequest(req);
     console.log(reqType)
