@@ -69,18 +69,3 @@ export const getDetails = query({ // returns array of user and their properties 
     }
 })
 
-export const DeleteSSToken = query({ // give an ID, deletes their token, expiry date and creation time
-    args: {
-        id: v.id(),
-        email: v.string(),
-        googleID: v.string(),
-        name: v.string()
-    },
-    handler: async (ctx, args) => {
-        await ctx.db.replace("BG_TESTING", args.id, {
-            name: args.name,
-            email: args.email,
-            googleID: args.googleID
-        });
-    }
-})
