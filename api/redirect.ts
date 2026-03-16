@@ -8,7 +8,7 @@ import url from 'url'
 import * as cookie from 'cookie'
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
-import { error } from 'console'
+import { randomBytes } from 'crypto'
 
 const convexClient = new ConvexHttpClient(process.env.CONVEX_URL as string);
 const __filename = url.fileURLToPath(import.meta.url); // file name
@@ -55,7 +55,7 @@ const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl:
         console.log("Back to login!");
     }
     if (typeofReqUrl === "protected" && error instanceof Error && error.message === "Cannot find user in DB") {
-        res.redirect("https://google-logins.vercel.app/login")
+        res.redirect("https://google-logins.vercel.app/login") // TODO: Needs cookie to be deleted at some point
         res.end("Not a valid cookie.");
     }
     if (userObj != undefined && error instanceof Error && error.message === "Outdated token") {
@@ -67,8 +67,18 @@ const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl:
         })
         console.log("user cookie is outdated, needs refresh")
     }
-    if (!(userObj instanceof Error)) {
-        console.log(userObj);
+    if (userObj != undefined && error === undefined) {
+        if (userObj.tokenExpiryDate < (Date.now() + 604800000)) { // checks if less then a week until expiry 
+            let newSSToken = randomBytes(32).toString('hex');
+            let newExpiryDate = Date.now() + 2592000000;
+            convexClient.mutation(api.userLogin.UpdateSSToken, {
+                id: userObj._id,
+                SSToken: newSSToken,
+                ExpiryDate: newExpiryDate
+            })
+            console.log("updated cookie")
+            // TODO: Update actual cookie
+        }
     }
 }
 

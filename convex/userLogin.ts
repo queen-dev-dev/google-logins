@@ -69,7 +69,7 @@ export const getDetails = query({ // returns object of user and their properties
     }
 })
 
-export const DeleteSSToken = mutation({ // give an ID, deletes their token and expiry date 
+export const DeleteSSToken = mutation({ // give an ID, deletes their token and expiry date
     args: {
         id: v.id("BG_TESTING"),
         email: v.string(),
@@ -84,5 +84,19 @@ export const DeleteSSToken = mutation({ // give an ID, deletes their token and e
             ssToken: "REMOVED",
             tokenExpiryDate: 0
         });
+    }
+})
+
+export const UpdateSSToken = mutation({ // give an ID, updates token and expiry date 
+    args: {
+        id: v.id("BG_TESTING"),
+        SSToken: v.string(),
+        ExpiryDate: v.number()
+    },
+    handler: async (ctx, args) => {
+        await ctx.db.patch("BG_TESTING", args.id, {
+            ssToken: args.SSToken,
+            tokenExpiryDate: args.ExpiryDate
+        })
     }
 })
