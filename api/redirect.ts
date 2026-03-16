@@ -19,6 +19,7 @@ const fixCookie = function (cookieToFix: string) {
 }
 
 const checkCookies = async (req: VercelRequest) => {
+    let userObj;
     try {
         let cookies;
         if (!req.headers.cookie) throw new Error("No cookies found");// returns object
@@ -27,42 +28,55 @@ const checkCookies = async (req: VercelRequest) => {
         if (!cookies.SSToken) throw new Error("No Session token found");
 
         let SSToken = fixCookie(cookies.SSToken as string);
-        const userObj = await convexClient.query(api.userLogin.getDetails, { ssToken: SSToken }) // new user object will not appear on a new login unless you remove data from DB (not allowed to have doubles)
+        userObj = await convexClient.query(api.userLogin.getDetails, { ssToken: SSToken }) // new user object will not appear on a new login unless you remove data from DB (not allowed to have doubles)
         if (!userObj || userObj === null) throw new Error("Cannot find user in DB");
 
         console.log("user is verified");
         if (userObj.tokenExpiryDate < Date.now()) throw new Error("Outdated token");
-        return userObj
+        return { userObj, undefined }
     } catch (error) {
-        console.error(`error message (bad cookie): ${error}`);
-        return (error);
+        if (error instanceof Error) {
+            if (!userObj) {
+                console.error(`error message (bad cookie): ${error}`);
+                return ({ undefined, error });
+            }
+            if (error.message = "Outdated token") return { userObj, error };
+        }
     }
 }
 
-const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl: string, typeofReqUrl: string) => {
+const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl: string, typeofReqUrl: string) => { // user Object = cookie
     console.log(`hello from inside cookie middleware`) // redirect works, but currently always redirects to login
-    const cookie = await checkCookies(req);
-    if (reqUrl != "login" && typeofReqUrl === "protected" && cookie instanceof Error && (cookie.message === "No Session token found" || cookie.message === "No cookies found")) {
+    const result = await checkCookies(req);
+    if (!result) throw new Error("Problems on bay!");
+    const { userObj, error } = result;
+    if (reqUrl != "login" && typeofReqUrl === "protected" && error instanceof Error && (error.message === "No Session token found" || error.message === "No cookies found")) {
         res.redirect("https://google-logins.vercel.app/login")
         console.log("Back to login!");
     }
-    if (typeofReqUrl === "protected" && cookie instanceof Error && cookie.message === "Cannot find user in DB") {
+    if (typeofReqUrl === "protected" && error instanceof Error && error.message === "Cannot find user in DB") {
         res.setHeader('Content-Type', 'text/plain');
         res.end("Not a valid cookie.");
     }
-    if (cookie instanceof Error && cookie.message === "Outdated token") {
-        console.log("hello")
+    if (userObj != undefined && error instanceof Error && error.message === "Outdated token") {
+        convexClient.mutation(api.userLogin.DeleteSSToken, {
+            id: userObj._id,
+            name: userObj.name,
+            email: userObj.email,
+            googleID: userObj.googleID,
+        })
+        console.log("user cookie is outdated, needs refresh")
     }
-    if (!(cookie instanceof Error)) {
-        console.log(cookie);
+    if (!(userObj instanceof Error)) {
+        console.log(userObj);
     }
 }
 
 // method check
 const checkRequest = (req: VercelRequest) => {
     let reqType: string;
-    let reqMethod: string;
-    let reqUrl: string;
+    let reqMethod: string | undefined;
+    let reqUrl: string | undefined;
     let errors: string[] = [];
 
     if (req.method === 'GET') reqMethod = 'GET';
@@ -75,8 +89,7 @@ const checkRequest = (req: VercelRequest) => {
     else if (req.url === '/testing') reqUrl = 'testing';
     else if (req.url === '/login') reqUrl = 'login';
     else errors.push('404 Invalid URL - are you sure this is the correct address?');
-    if (reqUrl === "testing") reqType = "protected";
-    else reqType = "safe";
+    reqType = reqUrl === "testing" ? 'protected' : 'safe'
     console.log(`requrl is ${req.url}`);
     return { reqMethod, reqUrl, error: errors.length ? errors.join('; ') : null, reqType }; // returns errors joined if exist, or null otherwise
 }

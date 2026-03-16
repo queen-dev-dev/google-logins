@@ -55,7 +55,7 @@ export const _getSSToken = query({ // gives an array of strings containing all s
     }
 })
 
-export const getDetails = query({ // returns array of user and their properties - search based off ssToken (in cookie)
+export const getDetails = query({ // returns object of user and their properties - search based off ssToken (in cookie)
     args: {
         ssToken: v.string()
     },
@@ -69,3 +69,20 @@ export const getDetails = query({ // returns array of user and their properties 
     }
 })
 
+export const DeleteSSToken = mutation({ // give an ID, deletes their token, expiry date and creation time
+    args: {
+        id: v.id("BG_TESTING"),
+        email: v.string(),
+        googleID: v.string(),
+        name: v.string()
+    },
+    handler: async (ctx, args) => {
+        await ctx.db.replace("BG_TESTING", args.id, {
+            name: args.name,
+            email: args.email,
+            googleID: args.googleID,
+            ssToken: "REMOVED",
+            tokenExpiryDate: 0
+        });
+    }
+})
