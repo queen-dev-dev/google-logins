@@ -133,6 +133,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader("Access-Control-Allow-Origin", "*"); // Or specific domain
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+    console.log(await convexClient.query(api.userLogin._readFull));
     let fileData: string;
     const { reqMethod, reqUrl, error, reqType } = checkRequest(req);
     console.log(reqType)
