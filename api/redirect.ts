@@ -45,6 +45,8 @@ const checkCookies = async (req: VercelRequest) => {
     }
 }
 
+// TODO -> When user is outdated, convex not updated
+
 const cookieMiddleware = async (req: VercelRequest, res: VercelResponse, reqUrl: string, typeofReqUrl: string) => { // user Object = cookie
     console.log(`hello from inside cookie middleware`) // redirect works, but currently always redirects to login
     const result = await checkCookies(req);
